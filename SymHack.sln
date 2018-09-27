@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2036
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SymHack", "SymHack\SymHack.csproj", "{FA358B5E-AA7C-4E61-80E9-45164F46457D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SymHack.Tests", "SymHack.Tests\SymHack.Tests.csproj", "{9D8FE611-A65F-4B64-A7B4-D5709FA86756}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{FA358B5E-AA7C-4E61-80E9-45164F46457D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA358B5E-AA7C-4E61-80E9-45164F46457D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA358B5E-AA7C-4E61-80E9-45164F46457D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA358B5E-AA7C-4E61-80E9-45164F46457D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9D8FE611-A65F-4B64-A7B4-D5709FA86756}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9D8FE611-A65F-4B64-A7B4-D5709FA86756}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9D8FE611-A65F-4B64-A7B4-D5709FA86756}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9D8FE611-A65F-4B64-A7B4-D5709FA86756}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {04B18EED-23F7-4B5E-A5BA-A7902BD2364A}
+	EndGlobalSection
+EndGlobal
