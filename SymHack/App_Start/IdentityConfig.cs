@@ -1,7 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Data.Entity;
+using System.Diagnostics;
 using System.Linq;
+using System.Net;
+using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
@@ -10,6 +14,8 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
+using SendGrid;
+using SendGrid.Helpers.Mail;
 using SymHack.Model;
 using SymHack.Models;
 using SymHack.Repository;
@@ -18,10 +24,33 @@ namespace SymHack
 {
     public class EmailService : IIdentityMessageService
     {
-        public Task SendAsync(IdentityMessage message)
+        public async Task SendAsync(IdentityMessage message)
         {
             // Plug in your email service here to send an email.
-            return Task.FromResult(0);
+            await ConfigSendGridasync(message);
+
+        }
+
+        private async Task ConfigSendGridasync(IdentityMessage message)
+        {
+            var myMessage = new SendGridMessage()
+            {
+                From = new EmailAddress("erin.bradley@mohawkcollege.ca", "Sym_Hack Admin"),
+                Subject = message.Subject,
+                PlainTextContent = message.Body,
+                HtmlContent = message.Body
+            };
+
+            myMessage.AddTo(message.Destination);
+
+            var credentials = new NetworkCredential(
+                System.Environment.GetEnvironmentVariable("SYMHACK_MAIL"),
+                System.Environment.GetEnvironmentVariable("SYMHACK_PASSWORD")
+            );
+
+            var client = new SendGridClient(System.Environment.GetEnvironmentVariable("SENDGRID_APIKEY"));
+
+            await client.SendEmailAsync(myMessage);
         }
     }
 
