@@ -58,6 +58,10 @@
     <Compile Include="Migrations\201809272222546_Initial.Designer.cs">
       <DependentUpon>201809272222546_Initial.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201810160143363_Add_studentTeacher.cs" />
+    <Compile Include="Migrations\201810160143363_Add_studentTeacher.Designer.cs">
+      <DependentUpon>201810160143363_Add_studentTeacher.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SymHackContext.cs" />
@@ -75,6 +79,9 @@
   <ItemGroup>
     <EmbeddedResource Include="Migrations\201809272222546_Initial.resx">
       <DependentUpon>201809272222546_Initial.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201810160143363_Add_studentTeacher.resx">
+      <DependentUpon>201810160143363_Add_studentTeacher.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

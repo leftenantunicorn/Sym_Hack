@@ -35,7 +35,7 @@ namespace SymHack
         {
             var myMessage = new SendGridMessage()
             {
-                From = new EmailAddress("erin.bradley@mohawkcollege.ca", "Sym_Hack Admin"),
+                From = new EmailAddress("symhackgame@gmail.com", "Sym_Hack Admin"),
                 Subject = message.Subject,
                 PlainTextContent = message.Body,
                 HtmlContent = message.Body

@@ -1,0 +1,65 @@
+﻿@model SymHack.Models.TeacherViewModel
+
+@{
+    ViewBag.Title = "Teachers Only";
+}
+
+<h2>@ViewBag.Title.</h2>
+<div>
+    <p>
+        This page is only viewable by teachers.
+    </p>
+</div>
+<div>
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Students</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var student in Model.Students)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => student.Name)</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="col-md-12">
+        <h3>Add Student</h3>
+        <p>Click here to register a new student to your classlist</p>
+        <p><button class="btn btn-default" id="add-modal"><span class="glyphicon glyphicon-plus"></span></button></p>
+    </div>
+
+    <!-- modal placeholder-->
+    <div id='myModal' class='modal fade in'>
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div id='myModalContent'></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+    $("#add-modal").on("click", function(e) {
+        var $buttonClicked = $(this);
+        var options = { "backdrop": "static", keyboard: true };
+        $.ajax({
+            type: "GET",
+            url: '@Url.Action("Register", "Account")',
+            success: function(data) {
+                $('#myModalContent').html(data);
+                $('#callBackModal').modal(options);
+                $('#callBackModal').modal('show');
+            },
+            error: function(err) {
+                alert("Dynamic content load failed.");
+            }
+        });
+    });
+    </script>
+}

@@ -10,6 +10,7 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using SymHack.Model;
 using SymHack.Models;
+using SymHack.Repository;
 
 namespace SymHack.Controllers
 {
@@ -176,6 +177,8 @@ namespace SymHack.Controllers
 
                     ViewBag.Message = "Check your email and confirm your account, you must be confirmed "
                                       + "before you can log in.";
+
+                    await UserManager.AddToRoleAsync(user.Id, model.IsTeacher ? "Teacher" : "Student");
 
                     return View("Info");
                     // return RedirectToAction("Index", "Home");
