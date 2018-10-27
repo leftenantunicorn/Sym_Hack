@@ -1,0 +1,10 @@
+﻿@model SymHack.Models.StudentViewModel 
+<tr>
+    @using (Html.BeginCollectionItem("RegisterStudents"))
+    {
+        <td>
+            @Html.TextBoxFor(m => m.Email, new { @class = "form-control add-field" })
+            @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+        </td>
+    }
+</tr>

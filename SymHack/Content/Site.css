@@ -22,3 +22,11 @@ select,
 textarea {
     max-width: 280px;
 }
+
+.add-field {
+    border-top: none;
+    border-right: none;
+    border-left: none;
+    border-radius: 0;
+    box-shadow: none;
+}

@@ -1,7 +1,5 @@
-﻿using System;
-using System.Globalization;
+﻿
 using System.Linq;
-using System.Security.Claims;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
@@ -10,7 +8,6 @@ using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using SymHack.Model;
 using SymHack.Models;
-using SymHack.Repository;
 
 namespace SymHack.Controllers
 {
@@ -167,23 +164,11 @@ namespace SymHack.Controllers
             if (ModelState.IsValid)
             {
                 var user = new SymHackUser { UserName = model.Email, Email = model.Email };
-                var result = await UserManager.CreateAsync(user, model.Password);
-                if (result.Succeeded)
+                if (await RegisterUser(user, model.Password, model.IsTeacher, ModelState))
                 {
-                    // Comment the following line to prevent log in until the user is confirmed.
-                    // await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-
-                    string callbackUrl = await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
-
-                    ViewBag.Message = "Check your email and confirm your account, you must be confirmed "
-                                      + "before you can log in.";
-
-                    await UserManager.AddToRoleAsync(user.Id, model.IsTeacher ? "Teacher" : "Student");
-
                     return View("Info");
                     // return RedirectToAction("Index", "Home");
                 }
-                AddErrors(result);
             }
 
             // If we got this far, something failed, redisplay form
@@ -453,11 +438,39 @@ namespace SymHack.Controllers
             }
         }
 
-        private void AddErrors(IdentityResult result)
+
+        public async Task<bool> RegisterUser(SymHackUser user, string password, bool isTeacher, ModelStateDictionary modelState)
+        {
+            var result = await UserManager.CreateAsync(user, password);
+            if (result.Succeeded)
+            {
+                // Comment the following line to prevent log in until the user is confirmed.
+                // await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
+
+                //await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
+
+                ViewBag.Message = "Check your email and confirm your account, you must be confirmed "
+                                  + "before you can log in.";
+
+                await UserManager.AddToRoleAsync(user.Id, isTeacher ? "Teacher" : "Student");
+
+                return true;
+            }
+
+            AddErrors(result, modelState);
+            return false;
+        }
+
+        public void AddErrors(IdentityResult result)
+        {
+           AddErrors(result, ModelState);
+        }
+
+        public void AddErrors(IdentityResult result, ModelStateDictionary modelState)
         {
             foreach (var error in result.Errors)
             {
-                ModelState.AddModelError("", error);
+                modelState.AddModelError("", error);
             }
         }
 

@@ -1,0 +1,22 @@
+﻿@model SymHack.Models.TeacherViewModel
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Students</th>
+                <th scope="col"></th>
+            </tr>
+        </thead>
+        <tbody>
+        @foreach (var student in Model.Students)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => student.Email)</td>
+                <td>
+                    @Ajax.ActionLink("Delete", "DeleteStudent", "Teacher", new { email = student.Email }, new AjaxOptions  {  HttpMethod = "POST",  OnSuccess= "refreshList"}, new { @class = "btn btn-link" })
+                    @Ajax.ActionLink("View", "ViewStudent", "Teacher", new { email = student.Email }, new AjaxOptions { UpdateTargetId = "content-id", OnSuccess = "showModal"}, new { @class = "btn btn-link" })   
+                </td>
+            </tr>
+         }
+        </tbody>
+    </table>

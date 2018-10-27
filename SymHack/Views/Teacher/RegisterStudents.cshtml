@@ -1,0 +1,39 @@
+﻿@using SymHack.Models
+@model SymHack.Models.TeacherViewModel
+
+<div class="col-md-12">
+    @using (Ajax.BeginForm("Register", "Teacher", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "register", OnSuccess = "refreshList" }, new { @class = "form-horizontal", role = "form" }))
+    {
+        <h3>Add Student</h3>
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true, "", new { @class = "text-danger" })
+        <table class="table" id="register-table">
+            <thead>
+            <tr>
+                <th scope="col">Email</th>
+            </tr>
+            </thead>
+            <tbody>
+             @foreach (var student in Model.RegisterStudents)
+             {
+                 @Html.Partial("AddStudent", student)
+             }
+            </tbody>
+        </table>
+
+        <div class="form-group">
+            <div class="col-md-6">
+                <p>Click here to add a new student to your classlist</p>
+                <button class="btn btn-default" id="add-student"><span class="glyphicon glyphicon-plus"></span></button>
+                <button class="btn btn-default" id="cancel-student"><span class="glyphicon glyphicon-minus"></span></button>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class=" col-md-10">
+                <input type="submit" class="btn btn-default" value="Register" />
+            </div>
+        </div>
+    }
+</div>
+

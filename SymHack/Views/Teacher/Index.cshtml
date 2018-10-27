@@ -1,4 +1,6 @@
-﻿@model SymHack.Models.TeacherViewModel
+﻿@using SymHack.Models
+@model SymHack.Models.TeacherViewModel
+
 
 @{
     ViewBag.Title = "Teachers Only";
@@ -10,56 +12,57 @@
         This page is only viewable by teachers.
     </p>
 </div>
-<div>
-    <table class="table">
-        <thead>
-            <tr>
-                <th scope="col">Students</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var student in Model.Students)
-            {
-                <tr>
-                    <td>@Html.DisplayFor(modelItem => student.Name)</td>
-                </tr>
-            }
-        </tbody>
-    </table>
 
-    <div class="col-md-12">
-        <h3>Add Student</h3>
-        <p>Click here to register a new student to your classlist</p>
-        <p><button class="btn btn-default" id="add-modal"><span class="glyphicon glyphicon-plus"></span></button></p>
-    </div>
+<div id="list">
+    @Html.Action("List", "Teacher", Model)
+</div>
 
-    <!-- modal placeholder-->
-    <div id='myModal' class='modal fade in'>
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div id='myModalContent'></div>
+
+<div id="register">
+    @Html.Partial("RegisterStudents", Model)
+</div>
+
+<div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 style="color:green;">Player Data</h4>
+            </div>
+            <div class="modal-body" id="content-id">
+
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-default btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Close</button>
             </div>
         </div>
     </div>
-</div>
+</div> 
+
 
 @section scripts {
-    <script>
-    $("#add-modal").on("click", function(e) {
-        var $buttonClicked = $(this);
-        var options = { "backdrop": "static", keyboard: true };
-        $.ajax({
-            type: "GET",
-            url: '@Url.Action("Register", "Account")',
-            success: function(data) {
-                $('#myModalContent').html(data);
-                $('#callBackModal').modal(options);
-                $('#callBackModal').modal('show');
-            },
-            error: function(err) {
-                alert("Dynamic content load failed.");
+        <script>
+            $(document).on("click", "#add-student", function (e) {
+
+            $.get('@Url.Action("AddStudent")')
+                .done(function (response) {
+                    $('#register-table > tbody').append(response);
+                });
+
+            e.preventDefault();
+            });
+
+            $(document).on("click", "#cancel-student", function (e) {
+                $('#register-table > tbody tr:last').remove();
+                e.preventDefault();
+            });
+
+            function refreshList(data) {
+                $('#list').load('@Url.Action("List")');
             }
-        });
-    });
-    </script>
-}
+
+            function showModal() {
+                $('#myModal').modal('show');
+            }
+        </script>
+    }
