@@ -51,7 +51,7 @@ namespace SymHack.Controllers
                 Students = new List<StudentViewModel>(),
                 RegisterStudents = new List<StudentViewModel>()
 
-        };
+            };
 
             return View(teacher);
         }

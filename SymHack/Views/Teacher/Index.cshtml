@@ -41,28 +41,28 @@
 
 
 @section scripts {
-        <script>
-            $(document).on("click", "#add-student", function (e) {
+    <script>
+        $(document).on("click", "#add-student", function (e) {
 
-            $.get('@Url.Action("AddStudent")')
-                .done(function (response) {
-                    $('#register-table > tbody').append(response);
-                });
+        $.get('@Url.Action("AddStudent")')
+            .done(function (response) {
+                $('#register-table > tbody').append(response);
+            });
 
             e.preventDefault();
-            });
+        });
 
-            $(document).on("click", "#cancel-student", function (e) {
-                $('#register-table > tbody tr:last').remove();
-                e.preventDefault();
-            });
+        $(document).on("click", "#cancel-student", function (e) {
+            $('#register-table > tbody tr:last').remove();
+            e.preventDefault();
+        });
 
-            function refreshList(data) {
-                $('#list').load('@Url.Action("List")');
-            }
+        function refreshList(data) {
+            $('#list').load('@Url.Action("List")');
+        }
 
-            function showModal() {
-                $('#myModal').modal('show');
-            }
-        </script>
-    }
+        function showModal() {
+            $('#myModal').modal('show');
+        }
+    </script>
+}

@@ -1,0 +1,106 @@
+﻿@model SymHack.Models.ModuleViewModels
+<style>
+    #module_display {
+        padding: 10px;
+        overflow: hidden;
+    }
+
+    .panel-body {
+        height: 80vh
+    }
+</style>
+<h2>@Model.Title</h2>
+<div class="col-md-12 panel panel-default" id="module_display">
+    @using (Ajax.BeginForm("Submit", "Game", new AjaxOptions { HttpMethod = "POST" }, new { @class = "form-horizontal", role = "form" }))
+    {
+        <div class="panel-heading col-md-12" id="help-buttons">
+            <button id="help">?</button>
+            <button id="hint">H</button>
+            <button id="phone"><span class="glyphicon glyphicon-phone"></span></button>
+        </div>
+        <div class="form-content panel-body">
+            @Html.Partial(Model.ModuleType, Model)
+        </div>
+    }
+</div>
+
+<div class="modal fade" id="mhelp" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 style="color:green;">Help</h4>
+            </div>
+            <div class="modal-body" id="content-id">
+                @foreach (var help in Model.Help)
+                {
+                    @Html.DisplayFor(m => help)
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-default btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mhints" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 style="color:green;">Hints</h4>
+            </div>
+            <div class="modal-body" id="content-id">
+                @foreach (var hint in Model.Hints)
+                {
+                    @Html.DisplayFor(m => hint)
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-default btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="mphone" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 style="color:green;">Emails</h4>
+            </div>
+            <div class="modal-body" id="content-id">
+                @foreach (var email in Model.Email)
+                {
+                    @Html.DisplayFor(m => email)
+                }
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-default btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script type="text/javascript" src="@Url.Content(string.Concat("/Scripts/Modules/", Model.ModuleType, ".js"))"></script>
+    
+
+    <script>
+        $( "#help" ).click(function(e) {
+            $('#mhelp').modal('show');
+            e.preventDefault();
+        });
+        $( "#hint" ).click(function(e) {
+            $('#mhints').modal('show');
+            e.preventDefault();
+        });
+        $( "#phone" ).click(function(e) {
+            $('#mphone').modal('show');
+            e.preventDefault();
+        });
+    </script>
+
+}

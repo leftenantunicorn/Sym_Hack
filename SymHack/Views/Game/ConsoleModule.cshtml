@@ -1,0 +1,63 @@
+﻿@using SymHack.Models
+@model SymHack.Models.ModuleViewModels
+
+<style>
+    .console-input {
+        min-width: 100%;
+    }
+
+    #console-output {
+        min-width: 100%;
+        resize: none;
+        height: 70vh;
+        background-color: white;
+    }
+
+    .console {
+        width: 100%;
+    }
+
+    span {
+        padding-left: 0px !important;
+        padding-right: 0px !important
+    }
+
+    .input-group-addon {
+        font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+        color: blue;
+        background-color: white;
+        border: none !important;
+    }
+
+    input {
+        font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
+        border: none !important;
+        box-shadow: none !important;
+        background-color: white !important;
+    }
+
+    .caret {
+        border-width: 20px;
+    }
+
+    #template, #template-response {
+        display: none;
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0px;
+    }
+</style>
+
+<div id="loader" data-request-url="@Url.Action("GetResponse", "Game")" style="display: none"></div>
+ 
+<ul id="console-lines">
+    <li class="input-group col-md-12 console" id="template">
+        <span class="input-group-addon">@string.Concat("root@",Model.Username, ": ~#")</span>
+        <input class="form-control console-input"/>
+    </li>
+    <li class="input-group col-md-12 console" id="template-response">
+        <input class="form-control console-input" readonly/>
+    </li>
+</ul>
