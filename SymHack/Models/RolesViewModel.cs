@@ -15,7 +15,10 @@ namespace SymHack.Models
         [Display(Name="Register Students")]
         public ICollection<StudentViewModel> RegisterStudents { get; set; }
 
-        public TeacherViewModel() => RegisterStudents = new List<StudentViewModel>();
+        public TeacherViewModel()
+        {
+            RegisterStudents = new List<StudentViewModel>();
+        } 
     }
 
     public class StudentViewModel
