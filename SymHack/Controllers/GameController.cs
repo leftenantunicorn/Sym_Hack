@@ -39,6 +39,7 @@ namespace SymHack.Controllers
         {
             // Eventually this will need to be able to load modules based on previous selection
             // Load will be called on the redirect
+            // Add comment
             _currentModule = load().Result;
         }
 
