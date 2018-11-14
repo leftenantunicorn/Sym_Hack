@@ -2,11 +2,11 @@
 <style>
     #module_display {
         padding: 10px;
-        overflow: hidden;
     }
 
     .panel-body {
-        height: 80vh
+        height: 70vh;
+        overflow-y: scroll;
     }
 </style>
 <h2>@Model.Title</h2>
@@ -72,7 +72,7 @@
                 <h4 style="color:green;">Emails</h4>
             </div>
             <div class="modal-body" id="content-id">
-                @foreach (var email in Model.Email)
+                @foreach (var email in Model.Emails)
                 {
                     @Html.DisplayFor(m => email)
                 }
@@ -85,19 +85,16 @@
 </div>
 
 @section scripts {
-    <script type="text/javascript" src="@Url.Content(string.Concat("/Scripts/Modules/", Model.ModuleType, ".js"))"></script>
-    
-
     <script>
-        $( "#help" ).click(function(e) {
+        $("#help").click(function (e) {
             $('#mhelp').modal('show');
             e.preventDefault();
         });
-        $( "#hint" ).click(function(e) {
+        $("#hint").click(function (e) {
             $('#mhints').modal('show');
             e.preventDefault();
         });
-        $( "#phone" ).click(function(e) {
+        $("#phone").click(function (e) {
             $('#mphone').modal('show');
             e.preventDefault();
         });

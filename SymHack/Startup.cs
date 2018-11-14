@@ -1,8 +1,12 @@
-﻿using Microsoft.AspNet.Identity;
+﻿using System.Web.Mvc;
+using AutoMapper;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.Owin;
 using Owin;
+using SymHack.App_Start;
 using SymHack.Model;
+using SymHack.Models;
 using SymHack.Repository;
 
 [assembly: OwinStartupAttribute(typeof(SymHack.Startup))]
@@ -12,6 +16,7 @@ namespace SymHack
     {
         public void Configuration(IAppBuilder app)
         {
+            AutofacConfig.RegisterComponents();
             ConfigureAuth(app);
             CreateUsersAndRoles();
         }

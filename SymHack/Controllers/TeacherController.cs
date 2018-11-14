@@ -7,39 +7,20 @@ using System.Web.Mvc;
 using System.Web.Security;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
-using Microsoft.Owin;
 using SymHack.Model;
 using SymHack.Models;
-using SymHack.Repository;
-using SymHack.Repository.Migrations;
-using WebGrease.Css.Extensions;
 
 namespace SymHack.Controllers
 {
     public class TeacherController : Controller
     {
-        private ApplicationUserManager _userManager;
-
-        public TeacherController()
-        {
-        }
+        private ApplicationUserManager UserManager;
 
         public TeacherController(ApplicationUserManager userManager)
         {
             UserManager = userManager;
         }
 
-        public ApplicationUserManager UserManager
-        {
-            get
-            {
-                return _userManager ?? HttpContext.GetOwinContext().GetUserManager<ApplicationUserManager>();
-            }
-            private set
-            {
-                _userManager = value;
-            }
-        }
 
         [Authorize(Roles = "Teacher")]
         // GET: Teacher

@@ -1,7 +1,29 @@
-﻿@using SymHack.Models
+﻿@using System.Text.RegularExpressions
+@using SymHack.Models
 @model SymHack.Models.ModuleViewModels
 
 <style>
+    /* width */
+    .panel-body::-webkit-scrollbar {
+        width: 10px;
+    }
+
+    /* Track */
+    .panel-body::-webkit-scrollbar-track {
+        background: #f1f1f1;
+    }
+ 
+    /* Handle */
+    .panel-body::-webkit-scrollbar-thumb {
+        background: #888;
+    }
+
+    /* Handle on hover */
+    .panel-body::-webkit-scrollbar-thumb:hover {
+        background: #555;
+    }
+
+
     .console-input {
         min-width: 100%;
     }
@@ -29,11 +51,16 @@
         border: none !important;
     }
 
-    input {
+    input, textarea {
         font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
         border: none !important;
         box-shadow: none !important;
         background-color: white !important;
+    }
+
+    textarea {
+        resize: none;
+        overflow: hidden;
     }
 
     .caret {
@@ -50,14 +77,75 @@
     }
 </style>
 
-<div id="loader" data-request-url="@Url.Action("GetResponse", "Game")" style="display: none"></div>
- 
 <ul id="console-lines">
+    @{
+        String pattern = @"{""input"":""(.+?)"",""output"":""(.+?)""}";
+        foreach (Match m in Regex.Matches(Model.Log, pattern))
+        {
+            <li class="input-group col-md-12 console">
+                <span class="input-group-addon" readonly>@string.Concat("root@", Model.Username, ": ~#")</span>
+                <input class="form-control console-input" value="@m.Groups[1].Value"/>
+            </li>
+            <li class="input-group col-md-12 console">
+                <textarea class="form-control console-input" readonly></textarea>
+                <script>$("textarea:last").val("@m.Groups[2].Value");</script>
+            </li>
+        }
+    }
     <li class="input-group col-md-12 console" id="template">
-        <span class="input-group-addon">@string.Concat("root@",Model.Username, ": ~#")</span>
+        <span class="input-group-addon">@string.Concat("root@", Model.Username, ": ~#")</span>
         <input class="form-control console-input"/>
     </li>
     <li class="input-group col-md-12 console" id="template-response">
-        <input class="form-control console-input" readonly/>
+        <textarea class="form-control console-input" readonly></textarea>
     </li>
 </ul>
+
+<script type="text/javascript" src="@Url.Content("/Scripts/Modules/flexibleArea.js")"></script>
+<script>
+    $("textarea").each(function() {
+        $(this).flexible();
+    });
+
+    $('#console-lines').append($("#template").clone().removeAttr('id'));
+
+    $('#console-lines').on('keypress', 'input', function (event) {
+        if (event.keyCode === 13) {
+            $.post("@Url.Action("GetResponse", "Game")", { key: this.value })
+                .done((response) => {       
+                    printRR(null, response);
+
+                    var log = { input: this.value, output: response };
+                    $.post("@Url.Action("HandleLog", "Game")", { id: "@Model.UserModuleId", addToLog: JSON.stringify(log) });
+                });
+
+            event.preventDefault();
+        }
+    });
+
+    function printRR(request, response) {
+        var clone = $("#template").clone().removeAttr('id');
+
+        if (response) {
+            var r_clone = $("#template-response").clone().removeAttr('id');
+            var el_response = r_clone.find('.console-input');
+
+            $(() => {
+                el_response.flexible();
+            });
+
+            el_response.val(response);
+            r_clone.find(':input').trigger("updateHeight");
+
+            $('#console-lines').append(r_clone);
+        }
+
+        if (request) {
+            var el_request = clone.find('.console-input');
+            el_request.val(request);
+        }
+
+        $('#console-lines').append(clone);
+    }
+
+</script>

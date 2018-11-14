@@ -62,7 +62,16 @@
     <Compile Include="Migrations\201810160143363_Add_studentTeacher.Designer.cs">
       <DependentUpon>201810160143363_Add_studentTeacher.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201811102340370_Add Module.cs" />
+    <Compile Include="Migrations\201811102340370_Add Module.Designer.cs">
+      <DependentUpon>201811102340370_Add Module.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811121713260_Added module tables for collection properties.cs" />
+    <Compile Include="Migrations\201811121713260_Added module tables for collection properties.Designer.cs">
+      <DependentUpon>201811121713260_Added module tables for collection properties.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
+    <Compile Include="ModuleManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SymHackContext.cs" />
   </ItemGroup>
@@ -82,6 +91,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201810160143363_Add_studentTeacher.resx">
       <DependentUpon>201810160143363_Add_studentTeacher.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811102340370_Add Module.resx">
+      <DependentUpon>201811102340370_Add Module.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811121713260_Added module tables for collection properties.resx">
+      <DependentUpon>201811121713260_Added module tables for collection properties.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

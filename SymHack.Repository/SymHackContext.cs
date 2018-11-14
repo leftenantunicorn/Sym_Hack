@@ -11,11 +11,15 @@ namespace SymHack.Repository
 {
     public class SymHackContext : IdentityDbContext<SymHackUser>
     {
-        public SymHackContext() : base("symhackcontext", throwIfV1Schema: false) { }
+        public DbSet<Module> Modules { get; set; }
+        public DbSet<ModuleType> ModuleTypes { get; set; }
+        public DbSet<ModuleDictionary> ModuleDictionary { get; set; }
+        public DbSet<ModuleHints> ModuleHints { get; set; }
+        public DbSet<ModuleEmails> ModuleEmails { get; set; }
+        public DbSet<ModuleHelp> ModuleHelp { get; set; }
+        public DbSet<ModuleStatus> ModuleStatus { get; set; }
+        public DbSet<UserModule> UserModules { get; set; }
 
-        public static SymHackContext Create()
-        {
-            return new SymHackContext();
-        }
+        public SymHackContext() : base("symhackcontext", throwIfV1Schema: false) { }
     }
 }

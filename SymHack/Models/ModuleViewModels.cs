@@ -12,7 +12,9 @@ namespace SymHack.Models
         public string Username { get; set; }
         public Dictionary<string, string> Responses { get; set; }
         public ICollection<string> Hints { get; set; }
-        public ICollection<string> Email { get; set; }
+        public ICollection<string> Emails { get; set; }
         public ICollection<string> Help { get; set; }
+        public string Log { get; set; }
+        public string UserModuleId { get; set; }
     }
 }
