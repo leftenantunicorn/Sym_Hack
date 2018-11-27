@@ -70,6 +70,14 @@
     <Compile Include="Migrations\201811121713260_Added module tables for collection properties.Designer.cs">
       <DependentUpon>201811121713260_Added module tables for collection properties.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201811150031304_Minor changes to module emails.cs" />
+    <Compile Include="Migrations\201811150031304_Minor changes to module emails.Designer.cs">
+      <DependentUpon>201811150031304_Minor changes to module emails.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811152053038_Added additional fields to user.cs" />
+    <Compile Include="Migrations\201811152053038_Added additional fields to user.Designer.cs">
+      <DependentUpon>201811152053038_Added additional fields to user.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -97,6 +105,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201811121713260_Added module tables for collection properties.resx">
       <DependentUpon>201811121713260_Added module tables for collection properties.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811150031304_Minor changes to module emails.resx">
+      <DependentUpon>201811150031304_Minor changes to module emails.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811152053038_Added additional fields to user.resx">
+      <DependentUpon>201811152053038_Added additional fields to user.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

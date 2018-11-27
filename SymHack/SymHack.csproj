@@ -57,6 +57,9 @@
     <Reference Include="BeginCollectionItem, Version=1.2.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\BeginCollectionItem.1.2.1.0\lib\net35\BeginCollectionItem.dll</HintPath>
     </Reference>
+    <Reference Include="FileHelpers, Version=3.3.0.0, Culture=neutral, PublicKeyToken=3e0c08d59cc3d657, processorArchitecture=MSIL">
+      <HintPath>..\packages\FileHelpers.3.3.0\lib\net45\FileHelpers.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="SendGrid, Version=9.10.0.0, Culture=neutral, PublicKeyToken=4f047e93159395ca, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -238,6 +241,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
+    <Compile Include="Models\HomeViewModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
     <Compile Include="Models\ModuleViewModels.cs" />
     <Compile Include="Models\RolesViewModel.cs" />
@@ -320,7 +324,9 @@
     <Content Include="Views\Teacher\ViewStudent.cshtml" />
     <Content Include="Views\Game\Index.cshtml" />
     <Content Include="Views\Game\ConsoleModule.cshtml" />
-    <Content Include="Views\Game\Log.cshtml" />
+    <Content Include="Views\Game\GameOver.cshtml" />
+    <Content Include="Views\Game\Email.cshtml" />
+    <Content Include="Views\Home\Options.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

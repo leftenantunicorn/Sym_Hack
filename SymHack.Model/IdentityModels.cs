@@ -11,6 +11,10 @@ namespace SymHack.Model
     // You can add profile data for the user by adding more properties to your SymHackUser class, please visit https://go.microsoft.com/fwlink/?LinkID=317594 to learn more.
     public class SymHackUser : IdentityUser
     {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string ExternalIdentifier { get; set; }
+        public bool RequirePasswordChange { get; set; }
         public SymHackUser Teacher { get; set; }
         public virtual ICollection<SymHackUser> Students { get; set; }
 

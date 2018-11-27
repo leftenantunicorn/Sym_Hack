@@ -1,9 +1,14 @@
-﻿@model SymHack.Models.TeacherViewModel
+﻿@using SymHack.Models
+@model SymHack.Models.TeacherViewModel
 
     <table class="table">
         <thead>
             <tr>
-                <th scope="col">Students</th>
+                <th scope="col">External Identifier</th>
+                <th scope="col">Email</th>
+                <th scope="col">First Name</th>
+                <th scope="col">Last Name</th>
+                <th scope="col">Confirmed</th>
                 <th scope="col"></th>
             </tr>
         </thead>
@@ -11,10 +16,14 @@
         @foreach (var student in Model.Students)
         {
             <tr>
+                <td>@Html.DisplayFor(modelItem => student.ExternalIdentifier)</td>
                 <td>@Html.DisplayFor(modelItem => student.Email)</td>
+                <td>@Html.DisplayFor(modelItem => student.FirstName)</td>
+                <td>@Html.DisplayFor(modelItem => student.LastName)</td>
+                <td>@Html.DisplayFor(modelItem => student.Confirmed)</td>
                 <td>
-                    @Ajax.ActionLink("Delete", "DeleteStudent", "Teacher", new { email = student.Email }, new AjaxOptions  {  HttpMethod = "POST",  OnSuccess= "refreshList"}, new { @class = "btn btn-link" })
-                    @Ajax.ActionLink("View", "ViewStudent", "Teacher", new { email = student.Email }, new AjaxOptions { UpdateTargetId = "content-id", OnSuccess = "showModal"}, new { @class = "btn btn-link" })   
+                    @Ajax.ActionLink("Delete", "DeleteStudent", "Teacher", new { email = student.Email }, new AjaxOptions { HttpMethod = "POST", OnSuccess = "refreshList" }, new { @class = "btn btn-link" })
+                    @Ajax.ActionLink("View", "ViewStudent", "Teacher", new { email = student.Email }, new AjaxOptions { UpdateTargetId = "content-id", OnSuccess = "showModal" }, new { @class = "btn btn-link" })
                 </td>
             </tr>
          }

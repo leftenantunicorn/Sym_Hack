@@ -19,6 +19,7 @@ namespace SymHack.Repository
         public DbSet<ModuleHelp> ModuleHelp { get; set; }
         public DbSet<ModuleStatus> ModuleStatus { get; set; }
         public DbSet<UserModule> UserModules { get; set; }
+        public DbSet<UserModuleEmails> UserModuleEmails { get; set; }
 
         public SymHackContext() : base("symhackcontext", throwIfV1Schema: false) { }
     }

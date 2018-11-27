@@ -7,6 +7,66 @@
 }
 else
 {
-    <p>@Html.DisplayFor(m => m.Name)</p>
-    <p>DDERERRERE</p>
+    <h4>@Html.DisplayFor(m => m.Name)</h4>
+    <p>@Html.DisplayFor(m => m.Email)</p>
+    <nr/>
+    <p>Progress</p>
+
+    <ul>
+    @foreach (var type in Model.Modules.GroupBy(m => m.ModuleType))
+     {
+         <li>
+             <a href="#" class="module-type">
+                 <div>@type.Key</div>
+             </a>
+             <canvas id="myChart" style="margin-top:10px;"></canvas>
+         </li>
+     }
+    </ul>
 }
+
+<script type="text/javascript" src="@Url.Content("/Scripts/Chart.bundle.min.js")"></script>
+<script>
+    $(".module-type").click(function(e) {
+        $(this).next("canvas").toggle();
+    });
+
+    var ctx = $("#myChart");
+
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: @Html.Raw(Model.Labels),
+            datasets: [{
+                data: @Html.Raw(Model.Data),
+                backgroundColor: @Html.Raw(Model.BackgroundColour),
+                borderColor: @Html.Raw(Model.BorderColour),
+                borderWidth: 1
+            }]
+        },
+        options: {
+            legend: {
+                display: false
+            },
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        min: 0,
+                        max: 2,
+                        stepSize: 1,
+                        callback: function(label, index, labels) {
+                            switch (label) {
+                            case 0:
+                                return 'Not Started';
+                            case 1:
+                                return 'In Progress';
+                            case 2:
+                                return 'Completed';
+                            }
+                        }
+                    }
+                }]
+            }
+        }
+    });
+</script>

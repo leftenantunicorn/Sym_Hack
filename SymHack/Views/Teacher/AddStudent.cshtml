@@ -3,8 +3,20 @@
     @using (Html.BeginCollectionItem("RegisterStudents"))
     {
         <td>
+            @Html.TextBoxFor(m => m.ExternalIdentifier, new { @class = "form-control add-field" })
+            @Html.ValidationMessageFor(m => m.ExternalIdentifier, "", new { @class = "text-danger" })
+        </td>
+        <td>
             @Html.TextBoxFor(m => m.Email, new { @class = "form-control add-field" })
             @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+        </td>
+        <td>
+            @Html.TextBoxFor(m => m.FirstName, new { @class = "form-control add-field" })
+            @Html.ValidationMessageFor(m => m.FirstName, "", new { @class = "text-danger" })
+        </td>
+        <td>
+            @Html.TextBoxFor(m => m.LastName, new { @class = "form-control add-field" })
+            @Html.ValidationMessageFor(m => m.LastName, "", new { @class = "text-danger" })
         </td>
     }
 </tr>

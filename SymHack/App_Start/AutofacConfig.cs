@@ -29,7 +29,7 @@ namespace SymHack
                 DataProtectionProvider = new Microsoft.Owin.Security.DataProtection.DpapiDataProtectionProvider("Application​")
             });
             builder.RegisterType<ModuleManager>().AsSelf().InstancePerRequest();
-            builder.RegisterControllers(typeof(MvcApplication).Assembly).InstancePerRequest();
+            builder.RegisterControllers(typeof(MvcApplication).Assembly);
             builder.RegisterModule(new AutofacWebTypesModule());
 
             builder.Register(c => new MapperConfiguration(cfg =>

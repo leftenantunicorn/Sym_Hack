@@ -1,13 +1,16 @@
 ﻿
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
+using AutoMapper;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using SymHack.Model;
 using SymHack.Models;
+using SymHack.Repository;
 
 namespace SymHack.Controllers
 {
@@ -16,11 +19,15 @@ namespace SymHack.Controllers
     {
         private readonly ApplicationSignInManager SignInManager;
         private readonly ApplicationUserManager UserManager;
+        private readonly ModuleManager ModuleManager;
+        private readonly IMapper Mapper;
 
-        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager)
+        public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager, IMapper mapper, ModuleManager moduleManager)
         {
             UserManager = userManager;
             SignInManager = signInManager;
+            Mapper = mapper;
+            ModuleManager = moduleManager;
         }
 
         //
@@ -54,6 +61,15 @@ namespace SymHack.Controllers
 
                     ViewBag.errorMessage = "You must have a confirmed email to log on.";
                     return View("Error");
+                }
+
+                if (user.RequirePasswordChange)
+                {
+                    string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+                    var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+
+                    ViewBag.rawMessage = "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>";
+                    return View("Info");
                 }
             }
 
@@ -135,9 +151,12 @@ namespace SymHack.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new SymHackUser { UserName = model.Email, Email = model.Email };
+                var user = Mapper.Map<SymHackUser>(model);
+
                 if (await RegisterUser(user, model.Password, model.IsTeacher, ModelState))
                 {
+                    await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
+
                     return View("Info");
                     // return RedirectToAction("Index", "Home");
                 }
@@ -157,6 +176,16 @@ namespace SymHack.Controllers
                 return View("Error");
             }
             var result = await UserManager.ConfirmEmailAsync(userId, code);
+            var user = await UserManager.FindByIdAsync(userId);
+            if (user?.RequirePasswordChange == true)
+            {
+                string resetCode = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
+                var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = resetCode }, protocol: Request.Url.Scheme);
+
+                ViewBag.rawMessage = "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>";
+                return View("Info");
+            }
+
             return View(result.Succeeded ? "ConfirmEmail" : "Error");
         }
 
@@ -232,6 +261,11 @@ namespace SymHack.Controllers
             var result = await UserManager.ResetPasswordAsync(user.Id, model.Code, model.Password);
             if (result.Succeeded)
             {
+                if (user.RequirePasswordChange)
+                {
+                    user.RequirePasswordChange = false;
+                    await UserManager.UpdateAsync(user);
+                }
                 return RedirectToAction("ResetPasswordConfirmation", "Account");
             }
             AddErrors(result);
@@ -342,7 +376,7 @@ namespace SymHack.Controllers
                 {
                     return View("ExternalLoginFailure");
                 }
-                var user = new SymHackUser { UserName = model.Email, Email = model.Email };
+                var user = new SymHackUser { UserName = new MailAddress(model.Email).User, Email = model.Email };
                 var result = await UserManager.CreateAsync(user);
                 if (result.Succeeded)
                 {
@@ -417,12 +451,15 @@ namespace SymHack.Controllers
             if (result.Succeeded)
             {
                 // Comment the following line to prevent log in until the user is confirmed.
-                // await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-
-                //await SendEmailConfirmationTokenAsync(user.Id, "Confirm your account");
+                //await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
 
                 ViewBag.Message = "Check your email and confirm your account, you must be confirmed "
                                   + "before you can log in.";
+
+                foreach(var module in ModuleManager.GetAllModules())
+                {
+                    ModuleManager.AddUserModuleByModuleAndUser(module, user);
+                }
 
                 await UserManager.AddToRoleAsync(user.Id, isTeacher ? "Teacher" : "Student");
 

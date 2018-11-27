@@ -16,7 +16,8 @@ namespace SymHack.Model
         public virtual ICollection<ModuleHints> Hints { get; set; }
         public virtual ICollection<ModuleEmails> Emails { get; set; }
         public virtual ICollection<ModuleHelp> Help { get; set; }
-        public virtual ICollection<Module> Prerequisites { get; set; }
+        public virtual ICollection<ModuleWinConditions> WinConditions { get; set; }
+        public virtual Module Prerequisite { get; set; }
     }
 
     public class ModuleType
@@ -53,8 +54,18 @@ namespace SymHack.Model
 
         public string Title { get; set; }
         public string Body { get; set; }
-        public string To { get; set; }
         public string From { get; set; }
+    }
+
+    public class UserModuleEmails
+    {
+        [Key]
+        public Guid Id { get; set; }
+
+        public string Title { get; set; }
+        public string Body { get; set; }
+        public string To { get; set; }
+        public virtual UserModule UserModule { get; set; }
     }
 
     public class ModuleHelp
@@ -66,6 +77,14 @@ namespace SymHack.Model
         public string Description { get; set; }
     }
 
+    public class ModuleWinConditions
+    {
+        [Key]
+        public Guid Id { get; set; }
+
+        public string Condition { get; set; }
+    }
+
     public class UserModule
     {
         [Key]
@@ -73,6 +92,7 @@ namespace SymHack.Model
         public string Log { get; set; }
         public virtual ModuleStatus Status { get; set; }
         public virtual Module Module { get; set; }
+        public virtual ICollection<UserModuleEmails> ModuleEmails { get; set; }
         public virtual SymHackUser User { get; set; }
     }
 

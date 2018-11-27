@@ -6,7 +6,11 @@
 
 <h1 class="text-danger">Error.</h1>
 @{
-    if (String.IsNullOrEmpty(ViewBag.errorMessage))
+    if (!String.IsNullOrEmpty(ViewBag.rawErrorMessage))
+    {
+        <h2 class="text-danger">@Html.Raw(ViewBag.rawErrorMessage)</h2>
+    }
+    else if (String.IsNullOrEmpty(ViewBag.errorMessage))
     {
         <h2 class="text-danger">An error occurred while processing your request.</h2>
     }
@@ -15,4 +19,3 @@
         <h2 class="text-danger">@ViewBag.errorMessage</h2>
     }
 }
-

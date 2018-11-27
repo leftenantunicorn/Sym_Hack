@@ -51,7 +51,7 @@
         border: none !important;
     }
 
-    input, textarea {
+    #console-lines input, #console-lines textarea {
         font-family: "Courier New", Courier, "Lucida Sans Typewriter", "Lucida Typewriter", monospace;
         border: none !important;
         box-shadow: none !important;
@@ -80,16 +80,19 @@
 <ul id="console-lines">
     @{
         String pattern = @"{""input"":""(.+?)"",""output"":""(.+?)""}";
-        foreach (Match m in Regex.Matches(Model.Log, pattern))
+        if (Model.Log != null)
         {
-            <li class="input-group col-md-12 console">
-                <span class="input-group-addon" readonly>@string.Concat("root@", Model.Username, ": ~#")</span>
-                <input class="form-control console-input" value="@m.Groups[1].Value"/>
-            </li>
-            <li class="input-group col-md-12 console">
-                <textarea class="form-control console-input" readonly></textarea>
-                <script>$("textarea:last").val("@m.Groups[2].Value");</script>
-            </li>
+            foreach (Match m in Regex.Matches(Model.Log, pattern))
+            {
+                <li class="input-group col-md-12 console">
+                    <span class="input-group-addon" readonly>@string.Concat("root@", Model.Username, ": ~#")</span>
+                    <input class="form-control console-input" value="@m.Groups[1].Value"/>
+                </li>
+                <li class="input-group col-md-12 console">
+                    <textarea class="form-control console-input" readonly></textarea>
+                    <script>$("textarea:last").val("@m.Groups[2].Value");</script>
+                </li>
+            }
         }
     }
     <li class="input-group col-md-12 console" id="template">
@@ -101,7 +104,6 @@
     </li>
 </ul>
 
-<script type="text/javascript" src="@Url.Content("/Scripts/Modules/flexibleArea.js")"></script>
 <script>
     $("textarea").each(function() {
         $(this).flexible();
@@ -111,12 +113,12 @@
 
     $('#console-lines').on('keypress', 'input', function (event) {
         if (event.keyCode === 13) {
-            $.post("@Url.Action("GetResponse", "Game")", { key: this.value })
+            $.post("@Url.Action("GetResponse", "Game")", { key: this.value, id: "@Model.Id" })
                 .done((response) => {       
                     printRR(null, response);
 
                     var log = { input: this.value, output: response };
-                    $.post("@Url.Action("HandleLog", "Game")", { id: "@Model.UserModuleId", addToLog: JSON.stringify(log) });
+                    $.post("@Url.Action("AddToLog", "Game")", { id: "@Model.UserModuleId", addToLog: JSON.stringify(log) });
                 });
 
             event.preventDefault();

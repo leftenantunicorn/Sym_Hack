@@ -1,0 +1,71 @@
+﻿@model SymHack.Models.EmailViewModel
+<ul class="nav nav-tabs" id="tabContent">
+    <li class="active"><a href="#view" data-toggle="tab">View Emails</a></li>
+    <li><a href="#send" data-toggle="tab">Send Email</a></li>
+</ul>
+
+<div class="tab-content" id="email-content">
+    <div class="tab-pane active" id="view">
+        <h4>Inbox</h4>
+        <ul>
+            @foreach (var email in Model.Inbox)
+            {
+             <li>
+                 <a href="#" class="email-header">
+                     <div>@Html.DisplayFor(modelItem => email.Title)</div>
+                     <small>
+                         <div>From: @Html.DisplayFor(modelItem => email.From)</div>
+                         <div>To: @Html.DisplayFor(modelItem => Model.Username)</div>
+                     </small>
+                 </a>
+                 <div class="email-content" hidden>@Html.DisplayFor(modelItem => email.Body)</div>
+                 <hr/>
+             </li>
+            }
+        </ul>
+
+        <h4>Outbox</h4>
+        <ul>
+            @foreach (var email in Model.Outbox)
+            {
+                <li>
+                    <a href="#" class="email-header">
+                        <div>@Html.DisplayFor(modelItem => email.Title)</div>
+                        <small>
+                            <div>From: @Html.DisplayFor(modelItem => Model.Username)</div>
+                            <div>To: @Html.DisplayFor(modelItem => email.To)</div>
+                        </small>
+                    </a>
+                    <div class="email-content" hidden>@Html.DisplayFor(modelItem => email.Body)</div>
+                    <hr/>
+                </li>
+            }
+        </ul>
+    </div>
+
+    <div class="tab-pane" id="send">
+        @using (Ajax.BeginForm("SendEmail", "Game", new AjaxOptions { HttpMethod = "POST", UpdateTargetId = "email-content" }, new { id = "emailForm" }))
+        {
+            <h4>New Email</h4>
+            @Html.HiddenFor(m => m.Username, new { @class = "form-control" })
+            @Html.HiddenFor(m => m.UserModuleId, new { @class = "form-control" })
+            <div class="form-group">
+                @Html.LabelFor(m => m.NewEmail.Title):
+                @Html.TextBoxFor(m => m.NewEmail.Title, new { @class = "form-control" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(m => m.NewEmail.To):
+                @Html.TextBoxFor(m => m.NewEmail.To, new { @class = "form-control", placeholder = "Enter email", type = "email" })
+            </div>
+            <div class="form-group">
+                @Html.TextAreaFor(m => m.NewEmail.Body, new { id = "body", @class = "form-control" })
+                <script>$(() => { $("#body").flexible(); });</script>
+            </div>
+            <button type="submit" id="sendEmail" class="btn btn-primary">Send</button>
+        }
+    </div>
+</div>
+<br/>
+<div class="modal-footer">
+    <button type="submit" class="btn btn-default btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Close</button>
+</div>

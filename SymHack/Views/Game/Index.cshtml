@@ -1,4 +1,5 @@
-﻿@model SymHack.Models.ModuleViewModels
+﻿@using SymHack.Models
+@model SymHack.Models.ModuleViewModels
 <style>
     #module_display {
         padding: 10px;
@@ -9,16 +10,20 @@
         overflow-y: scroll;
     }
 </style>
+<script type="text/javascript" src="@Url.Content("/Scripts/Modules/flexibleArea.js")"></script>
 <h2>@Model.Title</h2>
 <div class="col-md-12 panel panel-default" id="module_display">
-    @using (Ajax.BeginForm("Submit", "Game", new AjaxOptions { HttpMethod = "POST" }, new { @class = "form-horizontal", role = "form" }))
+    @using (Ajax.BeginForm("CheckSubmission", "Game", new AjaxOptions { HttpMethod = "POST", OnSuccess = "checkedSubmission(data);"}, new { @class = "form-horizontal", role = "form" }))
     {
-        <div class="panel-heading col-md-12" id="help-buttons">
-            <button id="help">?</button>
-            <button id="hint">H</button>
-            <button id="phone"><span class="glyphicon glyphicon-phone"></span></button>
-        </div>
-        <div class="form-content panel-body">
+    <div class="panel-heading col-md-12" id="help-buttons">
+        <button id="help">?</button>
+        <button id="hint">H</button>
+        <button id="phone"><span class="glyphicon glyphicon-phone"></span></button>
+        <input type="text" name="userModuleId" class="form-control" id="title" value="@Model.UserModuleId" style="display:none" />
+        <input type="text" name="title" class="form-control" id="title" value="@Model.Title" style="display:none" />
+        <button type="submit">Submit</button>
+    </div>
+        <div class="form-content panel-body" id="main-content">
             @Html.Partial(Model.ModuleType, Model)
         </div>
     }
@@ -29,13 +34,18 @@
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
-                <h4 style="color:green;">Help</h4>
+                <h3 style="color:green;">Help</h3>
             </div>
             <div class="modal-body" id="content-id">
+                <ul>
                 @foreach (var help in Model.Help)
                 {
-                    @Html.DisplayFor(m => help)
+                    <li>
+                        <h4>@Html.DisplayFor(m => help.Topic)</h4>
+                        @Html.DisplayFor(m => help.Description)
+                    </li>
                 }
+                </ul>
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-default btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Close</button>
@@ -49,12 +59,21 @@
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
-                <h4 style="color:green;">Hints</h4>
+                <h3 style="color:green;">Hints</h3>
             </div>
             <div class="modal-body" id="content-id">
-                @foreach (var hint in Model.Hints)
+                @foreach (var topic in Model.Hints.GroupBy(h => h.Topic))
                 {
-                    @Html.DisplayFor(m => hint)
+                    <h4>@topic.Key</h4>
+                    <ul>
+                    @foreach (var hint in topic)
+                    {
+                        <li>
+                            <a href="#" class="hint-level">Level @hint.Level</a>
+                            <div class="hint-description" hidden>@hint.Hint</div>
+                        </li>
+                    }
+                    </ul>
                 }
             </div>
             <div class="modal-footer">
@@ -69,16 +88,17 @@
         <!-- Modal content-->
         <div class="modal-content">
             <div class="modal-header">
-                <h4 style="color:green;">Emails</h4>
+                <h3 style="color:green;">Emails</h3>
             </div>
-            <div class="modal-body" id="content-id">
-                @foreach (var email in Model.Emails)
+
+            <div class="modal-body" id="email-content">
+                @Html.Partial("Email", new EmailViewModel()
                 {
-                    @Html.DisplayFor(m => email)
-                }
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-default btn-default pull-left" data-dismiss="modal"><span class="glyphicon glyphicon-remove"></span> Close</button>
+                    Inbox = Model.Inbox,
+                    Outbox = Model.Outbox,
+                    Username = Model.Username,
+                    UserModuleId = Model.UserModuleId
+                })
             </div>
         </div>
     </div>
@@ -98,6 +118,19 @@
             $('#mphone').modal('show');
             e.preventDefault();
         });
+        $(".hint-level").click(function(e) {
+            $(this).next("div").toggle();
+        });
+        $(document).on('click', '.email-header', function (e) {
+            $(this).next("div").toggle();
+        });
+        function checkedSubmission(response) {
+            if (response.result === "redirect") {
+                window.location = response.url;
+            } else {
+                alert(response.result);
+            }
+        }
     </script>
 
 }

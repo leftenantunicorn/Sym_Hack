@@ -4,4 +4,11 @@
 }
 
 <h2>@ViewBag.Title.</h2>
-<h3>@ViewBag.Message</h3>
+@if (!String.IsNullOrEmpty(ViewBag.rawMessage))
+{
+    <h3>@Html.Raw(ViewBag.rawMessage)</h3>
+}
+else
+{
+    <h3>@ViewBag.Message</h3>
+}

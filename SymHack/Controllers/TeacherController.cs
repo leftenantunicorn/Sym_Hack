@@ -1,24 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
+using System.IO;
 using System.Linq;
+using System.Net.Mail;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Security;
+using AutoMapper;
+using FileHelpers;
+using Microsoft.Ajax.Utilities;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
+using Newtonsoft.Json;
 using SymHack.Model;
 using SymHack.Models;
+using SymHack.Repository;
 
 namespace SymHack.Controllers
 {
     public class TeacherController : Controller
     {
-        private ApplicationUserManager UserManager;
+        private readonly ApplicationUserManager UserManager;
+        private readonly ModuleManager ModuleManager;
+        private readonly IMapper Mapper;
 
-        public TeacherController(ApplicationUserManager userManager)
+        public TeacherController(ApplicationUserManager userManager, IMapper mapper, ModuleManager moduleManager)
         {
             UserManager = userManager;
+            Mapper = mapper;
+            ModuleManager = moduleManager;
         }
 
 
@@ -42,7 +54,7 @@ namespace SymHack.Controllers
         public async Task<ActionResult> List(TeacherViewModel teacher)
         {
             SymHackUser user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
-            teacher.Students = user.Students.Select(student => new StudentViewModel {Email = student.UserName}).ToList();
+            teacher.Students = user.Students.Select(student => Mapper.Map<StudentViewModel>(student)).ToList();
 
             return PartialView("ListStudents", teacher);
         }
@@ -68,12 +80,22 @@ namespace SymHack.Controllers
                     var password = Membership.GeneratePassword(8, 2);
 
                     // Associate teacher with new student
-                    SymHackUser teacher_user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
-                    var user = new SymHackUser {UserName = student.Email, Email = student.Email, Teacher = teacher_user };
+                    SymHackUser teacherUser = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+                    var user = Mapper.Map<SymHackUser>(student, opt => { opt.Items["teacher_user"] = teacherUser; });
 
-                    if (!await account_controller.RegisterUser(user, password, false, ModelState))
-                        registration_fail.Add(student);
+                    if (await account_controller.RegisterUser(user, password, false, ModelState))
+                    {
+                        string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+
+                        var email_link = Url.Action("ConfirmEmail", "Account",
+                            new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+
+                        await UserManager.SendEmailAsync(user.Id, "Confirm your account",
+                            "Please confirm your account by clicking <a href=\"" + email_link + "\">here</a>");
+                    }
+                    else registration_fail.Add(student);
                 }
+
                 teacher.RegisterStudents = registration_fail;
             }
             
@@ -98,6 +120,7 @@ namespace SymHack.Controllers
                 if (user != null)
                 {
                     await UserManager.RemoveFromRoleAsync(user.Id, "Student");
+                    ModuleManager.RemoveUserModuleByUserId(user.Id);
                     await UserManager.DeleteAsync(user);
                 }
             }
@@ -112,11 +135,39 @@ namespace SymHack.Controllers
             if (ModelState.IsValid)
             {
                 var user = await UserManager.FindByEmailAsync(email);
+                var modules = ModuleManager.GetAllModules();
+
+                var userModules = modules.Select(m => ModuleManager.GetUserModuleByModuleAndUserId(m.Id, user.Id))
+                    .ToList();
+
+                var labels = modules.Select(m => m.Title).ToArray();
+                var data = userModules.Select(um =>
+                        um.Status.Status.Equals("Not Started") ? 0 : (um.Status.Status.Equals("In Progress") ? 1 : 2))
+                    .ToArray();
+                string[] colourList = new string[modules.Count], backgroundColours = new string[modules.Count], borderColours = new string[modules.Count];
+                for (int i = 0; i < modules.Count; i++)
+                {
+                    colourList[i] = ChartColouring.ColourList[i % ChartColouring.ColourList.Length];
+                    backgroundColours[i] = ChartColouring.BackgroundColour[i % ChartColouring.BackgroundColour.Length];
+                    borderColours[i] = ChartColouring.BorderColour[i % ChartColouring.BorderColour.Length];
+                }
+
                 if (user != null)
                 {
                     var player = new PlayerViewModel()
                     {
-                        Name = user.Email
+                        Email = user.Email,
+                        Name = user.FirstName + " " + user.LastName,
+                        Modules = modules.Select(m => Mapper.Map<Module, ModuleViewModels>(m, opt =>
+                        {
+                            opt.Items["userId"] = user?.Id ?? "";
+                            opt.Items["username"] = user.UserName ?? "guest";
+                        })).ToList(),
+                        Labels = JsonConvert.SerializeObject(labels),
+                        Data = JsonConvert.SerializeObject(data),
+                        ColourList = JsonConvert.SerializeObject(colourList),
+                        BackgroundColour = JsonConvert.SerializeObject(backgroundColours),
+                        BorderColour = JsonConvert.SerializeObject(borderColours)
                     };
 
                     return PartialView("ViewStudent", player);
@@ -125,5 +176,34 @@ namespace SymHack.Controllers
 
             return PartialView("ViewStudent", null);
         }
+
+        [HttpPost]
+        [Authorize(Roles = "Teacher")]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> UploadFromFile(HttpPostedFileBase studentFile)
+        {
+            var teacher = new TeacherViewModel();
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    StreamReader reader = new StreamReader(studentFile.InputStream);
+
+                    var engine = new FileHelperEngine<StudentViewModel>();
+
+                    var students = engine.ReadStream(reader).ToList();
+                    teacher.RegisterStudents = students;
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError("", "Could not read file");
+                }
+            }
+
+            return PartialView("RegisterStudents", teacher);
+        }
     }
+
+
 }
