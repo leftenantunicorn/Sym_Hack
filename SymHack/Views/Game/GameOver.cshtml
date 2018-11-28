@@ -1,7 +1,22 @@
 ﻿@{
     ViewBag.Title = "Game Over";
 }
-<h2>@ViewBag.Title.</h2>
+<style>
+    .jumbotron {
+        text-align: center;
+    }
+</style>
+<h2>@ViewBag.Title</h2>
 <h3>@ViewBag.Message</h3>
+<div class="jumbotron">
+    <h1>Congratulations!</h1>
+    <h2>You have completed the module</h2>
+</div>
 
-<p>Game Completed! Congratulations</p>
+@using (Html.BeginForm("GameOver", "Game", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+    <label class="control-label" for="body">Leave Feedback</label>
+    <textarea class="form-control" name="body" style="height: 10vh;"></textarea>
+    <button class="btn btn-default" type="submit">Submit</button>
+}

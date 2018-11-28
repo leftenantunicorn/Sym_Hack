@@ -51,6 +51,7 @@ namespace SymHack.Models
 
     public class EmailViewModel
     {
+        public string ModuleId { get; set; }
         public string Username { get; set; }
         public string UserModuleId { get; set; }
         public ICollection<ModuleEmailsViewModels> Inbox { get; set; }

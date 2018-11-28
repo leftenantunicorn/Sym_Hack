@@ -34,7 +34,7 @@ namespace SymHack.Controllers
         }
 
 
-        [Authorize(Roles = "Teacher")]
+        [Authorize(Roles = "Teacher, Admin")]
         // GET: Teacher
         public async Task<ActionResult> Index()
         {
@@ -49,7 +49,7 @@ namespace SymHack.Controllers
             return View(teacher);
         }
 
-        [Authorize(Roles = "Teacher")]
+        [Authorize(Roles = "Teacher, Admin")]
         // GET: Teacher
         public async Task<ActionResult> List(TeacherViewModel teacher)
         {
@@ -60,7 +60,7 @@ namespace SymHack.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Teacher")]
+        [Authorize(Roles = "Teacher, Admin")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> Register(TeacherViewModel teacher)
         {
@@ -103,7 +103,7 @@ namespace SymHack.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Teacher")]
+        [Authorize(Roles = "Teacher, Admin")]
         public async Task<ActionResult> AddStudent()
         {
             var new_student = new StudentViewModel();
@@ -111,7 +111,7 @@ namespace SymHack.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Teacher")]
+        [Authorize(Roles = "Teacher, Admin")]
         public async Task<ActionResult> DeleteStudent(String email)
         {
             if (ModelState.IsValid)
@@ -129,7 +129,7 @@ namespace SymHack.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Teacher")]
+        [Authorize(Roles = "Teacher, Admin")]
         public async Task<ActionResult> ViewStudent(String email)
         {
             if (ModelState.IsValid)
@@ -178,7 +178,7 @@ namespace SymHack.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Teacher")]
+        [Authorize(Roles = "Teacher, Admin")]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> UploadFromFile(HttpPostedFileBase studentFile)
         {

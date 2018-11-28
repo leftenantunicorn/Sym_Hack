@@ -54,7 +54,7 @@ namespace SymHack.Controllers
             }
             else
             {
-                Response.Cookies["Log"].Value = "";
+                CookieWrapper.GuestLog = "";
             }
 
             return RedirectToAction("Index", new { moduleId = homeVM.CurrentGame.First() });
@@ -91,7 +91,8 @@ namespace SymHack.Controllers
 
             if (user == null)
             {
-                moduleVM.Log = Request.Cookies["Log"].Value;
+                moduleVM.Log = CookieWrapper.GuestLog;
+                moduleVM.Outbox = ParseLogEmails(CookieWrapper.GuestLog).Select(e => Mapper.Map<UserModuleEmailsViewModels>(e)).ToList();
             }
             else
             {
@@ -104,12 +105,12 @@ namespace SymHack.Controllers
         [HttpPost]
         public async Task<JsonResult> CheckSubmission(string userModuleId, string title)
         {
-            if (!ModelState.IsValid) return Json(new { result = "Requirements not yet met." }); ;
+            if (!ModelState.IsValid) return Json(new { result = "Error with your submission." }); ;
 
             SymHackUser user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             var module = ModuleManager.GetModuleByTitle(title);
 
-            var log = ModuleManager.GetUserModuleById(new Guid(userModuleId)).Log;
+            var log = ModuleManager?.GetUserModuleById(new Guid(userModuleId))?.Log ?? CookieWrapper.GuestLog;
 
             foreach (var winCondition in module.WinConditions)
             {
@@ -151,7 +152,7 @@ namespace SymHack.Controllers
             {
                 if (String.IsNullOrEmpty(id))
                 {
-                    Response.Cookies["Log"].Value += addToLog;
+                    CookieWrapper.GuestLog += addToLog;
                     return;
                 }
 
@@ -163,21 +164,30 @@ namespace SymHack.Controllers
         public PartialViewResult SendEmail(EmailViewModel emailVM)
         {
             string logEmail = $"{{\"email\":{{\"title\":\"{emailVM.NewEmail.Title}\",\"to\":\"{emailVM.NewEmail.To}\",\"body\":\"{emailVM.NewEmail.Body}\"}}}}";
+            ICollection<UserModuleEmails> outgoing = new List<UserModuleEmails>();
 
-            ModuleManager.AddToLogById(new Guid(emailVM.UserModuleId), logEmail);
-
-            UserModuleEmails email = new UserModuleEmails()
+            if (String.IsNullOrEmpty(emailVM.UserModuleId))
             {
-                Body = emailVM.NewEmail.Body,
-                Id = Guid.NewGuid(),
-                Title = emailVM.NewEmail.Title,
-                To = emailVM.NewEmail.To
-            };
+                CookieWrapper.GuestLog += logEmail;
+                outgoing = ParseLogEmails(CookieWrapper.GuestLog + logEmail);
+            }
+            else
+            {
+                ModuleManager.AddToLogById(new Guid(emailVM.UserModuleId), logEmail);
 
-            ModuleManager.AddUserModuleEmailById(new Guid(emailVM.UserModuleId), email);
+                UserModuleEmails email = new UserModuleEmails()
+                {
+                    Body = emailVM.NewEmail.Body,
+                    Id = Guid.NewGuid(),
+                    Title = emailVM.NewEmail.Title,
+                    To = emailVM.NewEmail.To
+                };
+                
+                ModuleManager.AddUserModuleEmailById(new Guid(emailVM.UserModuleId), email);
+                outgoing = ModuleManager.GetOutgoingEmailsByUserModuleId(new Guid(emailVM.UserModuleId));
+            }
 
-            var outgoing = ModuleManager.GetOutgoingEmailsByUserModuleId(new Guid(emailVM.UserModuleId));
-            var incoming = ModuleManager.GetIncomingEmailsByUserModuleId(new Guid(emailVM.UserModuleId));
+            var incoming = ModuleManager.GetIncomingEmailsByModuleId(new Guid(emailVM.ModuleId));
 
             ModelState.Clear();
 
@@ -187,7 +197,8 @@ namespace SymHack.Controllers
                 Outbox = outgoing.Select(e => Mapper.Map<UserModuleEmailsViewModels>(e)).ToList(),
                 UserModuleId = emailVM.UserModuleId,
                 Username = emailVM.Username,
-                NewEmail = new UserModuleEmailsViewModels()
+                NewEmail = new UserModuleEmailsViewModels(),
+                ModuleId = emailVM.ModuleId
             });
         }
 
@@ -195,5 +206,32 @@ namespace SymHack.Controllers
         {
             return View();
         }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> GameOver(string body)
+        {
+            await UserManager.SendEmailAsync("30b1eb71-7d27-4e0e-ab15-0f7289d4d70d", "Feedback",
+                body);
+
+            return View();
+        }
+
+        private ICollection<UserModuleEmails> ParseLogEmails(string log)
+        {
+            ICollection<UserModuleEmails> emails = new List<UserModuleEmails>();
+            String pattern = "{\"email\":{\"title\":\"(.+?)\",\"to\":\"(.+?)\",\"body\":\"(.+?)\"}}";
+            foreach (Match m in Regex.Matches(log, pattern))
+            {
+                emails.Add(new UserModuleEmails()
+                {
+                    Title = m.Groups[1].Value,
+                    Body = m.Groups[3].Value,
+                    To = m.Groups[2].Value,
+                });
+            }
+
+            return emails;
+        } 
     }
 }

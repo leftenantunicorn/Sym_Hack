@@ -48,6 +48,7 @@
         {
             <h4>New Email</h4>
             @Html.HiddenFor(m => m.Username, new { @class = "form-control" })
+            @Html.HiddenFor(m => m.ModuleId, new { @class = "form-control" })
             @Html.HiddenFor(m => m.UserModuleId, new { @class = "form-control" })
             <div class="form-group">
                 @Html.LabelFor(m => m.NewEmail.Title):

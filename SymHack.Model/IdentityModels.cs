@@ -15,6 +15,8 @@ namespace SymHack.Model
         public string LastName { get; set; }
         public string ExternalIdentifier { get; set; }
         public bool RequirePasswordChange { get; set; }
+        public int? MusicVolume { get; set; }
+        public string MusicStyle { get; set; }
         public SymHackUser Teacher { get; set; }
         public virtual ICollection<SymHackUser> Students { get; set; }
 

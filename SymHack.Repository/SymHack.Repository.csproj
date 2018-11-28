@@ -78,6 +78,14 @@
     <Compile Include="Migrations\201811152053038_Added additional fields to user.Designer.cs">
       <DependentUpon>201811152053038_Added additional fields to user.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201811281752031_Added options to user.cs" />
+    <Compile Include="Migrations\201811281752031_Added options to user.Designer.cs">
+      <DependentUpon>201811281752031_Added options to user.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811281806447_Updated volume to nullable int.cs" />
+    <Compile Include="Migrations\201811281806447_Updated volume to nullable int.Designer.cs">
+      <DependentUpon>201811281806447_Updated volume to nullable int.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -111,6 +119,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201811152053038_Added additional fields to user.resx">
       <DependentUpon>201811152053038_Added additional fields to user.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811281752031_Added options to user.resx">
+      <DependentUpon>201811281752031_Added options to user.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811281806447_Updated volume to nullable int.resx">
+      <DependentUpon>201811281806447_Updated volume to nullable int.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

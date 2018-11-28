@@ -10,6 +10,9 @@
     .jumbotron {
         text-align: center;
     }
+    form {
+        display: inline-block;
+    }
 </style>
 <div class="jumbotron">
     <h1>Sym-Hack</h1>
@@ -28,7 +31,7 @@
                 <p>@module.Title</p>
             }
         </p>
-        @if(User.Identity.GetUserId() != null)
+        @if(User.Identity.GetUserId() != null )
         {
             using (Html.BeginForm("Resume", "Game", FormMethod.Post))
              {
@@ -36,8 +39,7 @@
                  ;
                  for (int j = 0; j < Model.ModuleGroups[i].Count; j++)
                  {
-                     @Html.HiddenFor(m => m.CurrentGame[j], new {@Value = Model.ModuleGroups[i][j].Id})
-                     ;
+                     @Html.HiddenFor(m => m.CurrentGame[j], new {@Value = Model.ModuleGroups[i][j].Id});
                  }
                  <button type="submit" class="btn btn-default">Resume</button>
              }

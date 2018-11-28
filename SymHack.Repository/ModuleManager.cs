@@ -130,6 +130,12 @@ namespace SymHack.Repository
             return module?.Emails;
         }
 
+        public ICollection<ModuleEmails> GetIncomingEmailsByModuleId(Guid id)
+        {
+            var module = _context.Modules.FirstOrDefault(m => m.Id == id);
+            return module?.Emails;
+        }
+
         public void DeleteUserModuleEmailsById(Guid id)
         {
             var userModule = _context.UserModuleEmails.Where(m => m.UserModule.Id.Equals(id));

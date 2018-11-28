@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
@@ -50,9 +51,28 @@ namespace SymHack.Controllers
             return View();
         }
 
-        public ActionResult Options()
+        public async Task<ActionResult> Options()
         {
-            ViewBag.Message = "Your application description page.";
+            return View(await CreateOptions());
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Options(OptionsViewModel options)
+        {
+            SymHackUser user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+
+            if(user != null)
+            {
+                user.MusicStyle = options.Style;
+                user.MusicVolume = options.Volume;
+                await UserManager.UpdateAsync(user);
+            }
+            else
+            {
+                CookieWrapper.MusicStyle = options.Style;
+                CookieWrapper.MusicVolume = options.Volume.ToString();
+            }
 
             return View();
         }
@@ -92,6 +112,32 @@ namespace SymHack.Controllers
             }
 
             return moduleGroups;
+        }
+
+        public async Task<ActionResult> Music()
+        {
+            var optionsVM = await CreateOptions();
+
+            return PartialView("_Music", optionsVM);
+        }
+
+        private async Task<OptionsViewModel>  CreateOptions()
+        {
+            SymHackUser user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+            var optionsVM = new OptionsViewModel();
+
+            if (user != null)
+            {
+                optionsVM.Volume = user.MusicVolume ?? 50;
+                optionsVM.Style = user.MusicStyle ?? "mute";
+            }
+            else
+            {
+                optionsVM.Volume = Int32.TryParse(CookieWrapper.MusicVolume, out var temp) ? temp : 50;
+                optionsVM.Style = CookieWrapper.MusicStyle ?? "mute";
+            }
+
+            return optionsVM;
         }
     }
 }
