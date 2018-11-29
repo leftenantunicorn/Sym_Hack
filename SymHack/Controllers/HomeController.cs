@@ -108,9 +108,9 @@ namespace SymHack.Controllers
             return moduleGroups;
         }
 
-        public async Task<ActionResult> Music()
+        public ActionResult Music()
         {
-            var optionsVM = await CreateOptions();
+            var optionsVM = CreateOptions().Result;
 
             return PartialView("_Music", optionsVM);
         }

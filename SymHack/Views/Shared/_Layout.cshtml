@@ -29,6 +29,10 @@
                     {
                         <li>@Html.ActionLink("Teacher", "Index", "Teacher")</li>
                     }
+                    @if (Request.IsAuthenticated && (User.IsInRole("Admin")))
+                    {
+                        <li>@Html.ActionLink("Pending Requests", "Index", "Admin")</li>
+                    }
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>
@@ -41,7 +45,7 @@
             <p>&copy; @DateTime.Now.Year - My ASP.NET Application</p>
         </footer>
     </div>
-@Html.Action("Music", "Home")
+    @Html.Action("Music", "Home")
 
     @Scripts.Render("~/bundles/bootstrap")
     @RenderSection("scripts", required: false)

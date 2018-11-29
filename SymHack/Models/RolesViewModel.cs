@@ -10,6 +10,11 @@ using Microsoft.Ajax.Utilities;
 
 namespace SymHack.Models
 {
+    public class AdminViewModel
+    {
+        public List<StudentViewModel> PendingTeachers { get; set; }
+    }
+
     public class TeacherViewModel
     {
         [Display(Name="Students")]

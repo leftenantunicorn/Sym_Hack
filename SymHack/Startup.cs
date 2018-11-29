@@ -56,7 +56,7 @@ namespace SymHack
                 }
             }
 
-            // creating teacher role    
+            // Creating teacher role    
             if (!roleManager.RoleExists("Teacher"))
             {
                 var role = new IdentityRole();
@@ -80,11 +80,20 @@ namespace SymHack
                 }
             }
 
-            // creating Creating Employee role    
+            // Creating student role    
             if (!roleManager.RoleExists("Student"))
             {
                 var role = new IdentityRole();
                 role.Name = "Student";
+                roleManager.Create(role);
+
+            }
+
+            // Creating pending teacher role    
+            if (!roleManager.RoleExists("PendingTeacher"))
+            {
+                var role = new IdentityRole();
+                role.Name = "PendingTeacher";
                 roleManager.Create(role);
 
             }

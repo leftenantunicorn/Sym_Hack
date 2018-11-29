@@ -1,0 +1,25 @@
+﻿@model SymHack.Models.AdminViewModel
+<table class="table" id="pending">
+    <thead>
+        <tr>
+            <th scope="col">Email</th>
+            <th scope="col">First Name</th>
+            <th scope="col">Last Name</th>
+            <th scope="col"></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var student in Model.PendingTeachers)
+        {
+            <tr>
+                <td>@Html.DisplayFor(modelItem => student.Email)</td>
+                <td>@Html.DisplayFor(modelItem => student.FirstName)</td>
+                <td>@Html.DisplayFor(modelItem => student.LastName)</td>
+                <td>
+                    @Ajax.ActionLink("Approve", "ApproveTeacher", "Admin", new { email = student.Email }, new AjaxOptions { UpdateTargetId = "pending" }, new { @class = "btn btn-link", style = "padding:0" }) | 
+                    @Ajax.ActionLink("Reject", "RejectTeacher", "Admin", new { email = student.Email }, new AjaxOptions { UpdateTargetId = "pending" }, new { @class = "btn btn-link", style = "padding:0" })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -155,6 +155,19 @@ namespace SymHack.Controllers
             return response != null ? Regex.Unescape(response) : $"{key} is not recognized as an internal or external command, operable program or batch file.";
         }
 
+//        private bool CheckResponsePrerequisite(string key, Guid id)
+//        {
+//            var module = ModuleManager.GetModuleById(id);
+//            var matches = module.Responses.Select(r =>
+//            {
+//                var m = new Regex(Regex.Unescape(r.Request)).Match(key);
+//                object[] captures = new object[m.Groups.Count];
+//                m.Groups.CopyTo(captures, 0);
+//
+//                return String.Format(r.Response, captures);
+//            }).ToList();
+//        }
+
         [HttpPost]
         public void AddToLog(string id, string addToLog)
         {

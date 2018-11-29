@@ -1,0 +1,24 @@
+﻿@using SymHack.Models
+@model SymHack.Models.AdminViewModel
+<style>
+    ul {
+        list-style-type: none;
+    }
+</style>
+@{
+    ViewBag.Title = "Administrator Dashboard";
+}
+
+<h2>@ViewBag.Title.</h2>
+<div>
+</div>
+
+<div id="pending">
+    @Html.Partial("ListPending", Model)
+</div>
+
+@section scripts {
+    <script>
+
+    </script>
+}

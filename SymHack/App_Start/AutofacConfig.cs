@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿
+using System.Collections.Generic;
 using System.Web;
 using System.Web.Mvc;
 using Autofac;
 using Autofac.Integration.Mvc;
 using AutoMapper;
+using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;

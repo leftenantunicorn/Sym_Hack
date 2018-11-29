@@ -233,6 +233,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\CookieWrapper.cs" />
     <Compile Include="Controllers\GameController.cs" />
     <Compile Include="Controllers\Helpers.cs" />
@@ -334,6 +335,8 @@
     <Content Include="Views\Home\Options.cshtml" />
     <Content Include="Views\Shared\_Music.cshtml" />
     <Content Include="Views\Home\Progress.cshtml" />
+    <Content Include="Views\Admin\Index.cshtml" />
+    <Content Include="Views\Admin\ListPending.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -462,7 +462,8 @@ namespace SymHack.Controllers
                     ModuleManager.AddUserModuleByModuleAndUser(module, user);
                 }
 
-                await UserManager.AddToRoleAsync(user.Id, isTeacher ? "Teacher" : "Student");
+                //await UserManager.AddToRoleAsync(user.Id, isTeacher ? "Teacher" : "Student");
+                await UserManager.AddToRoleAsync(user.Id, isTeacher ? "PendingTeacher" : "Student");
 
                 return true;
             }
