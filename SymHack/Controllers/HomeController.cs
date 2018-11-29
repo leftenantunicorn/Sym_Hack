@@ -36,21 +36,6 @@ namespace SymHack.Controllers
             return View(homeVM);
         }
 
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your application description page.";
-
-            return View();
-        }
-
-        [Authorize]
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
-        }
-
         public async Task<ActionResult> Options()
         {
             return View(await CreateOptions());
@@ -75,6 +60,15 @@ namespace SymHack.Controllers
             }
 
             return View();
+        }
+
+        public async Task<Guid> GetInProgressModule(List<string> currentGame)
+        {
+            SymHackUser user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+            var gameModules =
+                currentGame.Select(m => ModuleManager.GetUserModuleByModuleAndUserId(new Guid(m), user.Id));
+            var currentModule = gameModules.FirstOrDefault(m => ModuleManager.GetStatusById(m.Id).Status.Equals("In Progress"));
+            return currentModule?.Module?.Id ?? Guid.Empty;
         }
 
         private async Task<List<List<ModuleViewModels>>> GetModuleGroups()
@@ -119,6 +113,27 @@ namespace SymHack.Controllers
             var optionsVM = await CreateOptions();
 
             return PartialView("_Music", optionsVM);
+        }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<ActionResult> Progress()
+        {
+            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+
+            var players = Helpers.GetPlayerModel(user, ModuleManager);
+
+            return View("Progress", players);
+        }
+
+
+        [HttpPost]
+        public async Task<JsonResult> GetChartData(String email)
+        {
+            var user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+
+            return Json(Helpers.GetPlayerModel(user, ModuleManager).Stats);
         }
 
         private async Task<OptionsViewModel>  CreateOptions()

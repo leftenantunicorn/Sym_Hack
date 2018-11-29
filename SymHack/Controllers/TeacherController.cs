@@ -88,7 +88,7 @@ namespace SymHack.Controllers
                         string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
 
                         var email_link = Url.Action("ConfirmEmail", "Account",
-                            new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+                            new {userId = user.Id, code = code}, protocol: Request.Url.Scheme);
 
                         await UserManager.SendEmailAsync(user.Id, "Confirm your account",
                             "Please confirm your account by clicking <a href=\"" + email_link + "\">here</a>");
@@ -98,7 +98,7 @@ namespace SymHack.Controllers
 
                 teacher.RegisterStudents = registration_fail;
             }
-            
+
             return PartialView("RegisterStudents", teacher);
         }
 
@@ -117,8 +117,15 @@ namespace SymHack.Controllers
             if (ModelState.IsValid)
             {
                 var user = await UserManager.FindByEmailAsync(email);
+                var currentUser = await UserManager.FindByIdAsync(User.Identity.GetUserId());
                 if (user != null)
                 {
+                    if (!currentUser.Equals(user.Teacher))
+                    {
+                        ViewBag.errorMessage = "The specified user is not associated with your account.";
+                        return View("Error");
+                    }
+
                     await UserManager.RemoveFromRoleAsync(user.Id, "Student");
                     ModuleManager.RemoveUserModuleByUserId(user.Id);
                     await UserManager.DeleteAsync(user);
@@ -135,47 +142,37 @@ namespace SymHack.Controllers
             if (ModelState.IsValid)
             {
                 var user = await UserManager.FindByEmailAsync(email);
-                var modules = ModuleManager.GetAllModules();
+                var currentUser = await UserManager.FindByIdAsync(User.Identity.GetUserId());
 
-                var userModules = modules.Select(m => ModuleManager.GetUserModuleByModuleAndUserId(m.Id, user.Id))
-                    .ToList();
-
-                var labels = modules.Select(m => m.Title).ToArray();
-                var data = userModules.Select(um =>
-                        um.Status.Status.Equals("Not Started") ? 0 : (um.Status.Status.Equals("In Progress") ? 1 : 2))
-                    .ToArray();
-                string[] colourList = new string[modules.Count], backgroundColours = new string[modules.Count], borderColours = new string[modules.Count];
-                for (int i = 0; i < modules.Count; i++)
+                if (user == null || !currentUser.Equals(user.Teacher))
                 {
-                    colourList[i] = ChartColouring.ColourList[i % ChartColouring.ColourList.Length];
-                    backgroundColours[i] = ChartColouring.BackgroundColour[i % ChartColouring.BackgroundColour.Length];
-                    borderColours[i] = ChartColouring.BorderColour[i % ChartColouring.BorderColour.Length];
+                    ViewBag.errorMessage = "The specified user is not associated with your account.";
+                    return View("Error");
                 }
 
-                if (user != null)
-                {
-                    var player = new PlayerViewModel()
-                    {
-                        Email = user.Email,
-                        Name = user.FirstName + " " + user.LastName,
-                        Modules = modules.Select(m => Mapper.Map<Module, ModuleViewModels>(m, opt =>
-                        {
-                            opt.Items["userId"] = user?.Id ?? "";
-                            opt.Items["username"] = user.UserName ?? "guest";
-                        })).ToList(),
-                        Labels = JsonConvert.SerializeObject(labels),
-                        Data = JsonConvert.SerializeObject(data),
-                        ColourList = JsonConvert.SerializeObject(colourList),
-                        BackgroundColour = JsonConvert.SerializeObject(backgroundColours),
-                        BorderColour = JsonConvert.SerializeObject(borderColours)
-                    };
+                var players = Helpers.GetPlayerModel(user, ModuleManager);
 
-                    return PartialView("ViewStudent", player);
-                }
+                return PartialView("ViewStudent", players);
             }
 
             return PartialView("ViewStudent", null);
         }
+
+        [HttpPost]
+        [Authorize(Roles = "Teacher, Admin")]
+        public async Task<JsonResult> GetChartData(String email)
+        {
+            var user = await UserManager.FindByEmailAsync(email);
+            var currentUser = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+
+            if (user == null || !currentUser.Equals(user.Teacher))
+            {
+                return null;
+            }
+
+            return Json(Helpers.GetPlayerModel(user, ModuleManager).Stats);
+        }
+
 
         [HttpPost]
         [Authorize(Roles = "Teacher, Admin")]
@@ -203,7 +200,7 @@ namespace SymHack.Controllers
 
             return PartialView("RegisterStudents", teacher);
         }
+
+       
     }
-
-
 }

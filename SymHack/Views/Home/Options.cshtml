@@ -2,6 +2,7 @@
 @{
     ViewBag.Title = "Options";
 }
+@Scripts.Render("~/bundles/mdb")  
 
 <h2>@ViewBag.Title.</h2>
 <h3>@ViewBag.Message</h3>
@@ -21,7 +22,7 @@
         <div class="radio"><label>@Html.RadioButtonFor(m => m.Style, "kHCn5h4_dh0", new { id = "style1" })Playlist 1</label></div>
         <div class="radio"><label>@Html.RadioButtonFor(m => m.Style, "qoma-IpMdV8", new { id = "style2" })Playlist 2</label></div>
         <div class="radio"><label>@Html.RadioButtonFor(m => m.Style, "32yZHsCv8NM1", new { id = "style3" })Playlist 3</label></div>
-        <div class="radio"><label class="btn btn-default" style="padding: 0 6px 0 6px">
+        <div class="radio"><label class="btn btn-default" style="padding: 2px 6px 0 6px">
             @Html.RadioButtonFor(m => m.Style, "mute", new { id = "style4", @hidden="hidden" })
             <span class="glyphicon glyphicon-volume-off" style="font-size: 2em"></span>
          </label></div>

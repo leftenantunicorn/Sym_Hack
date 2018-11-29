@@ -17,33 +17,42 @@
 <div class="jumbotron">
     <h1>Sym-Hack</h1>
     <p class="lead">Choose any of the following options, or select a game below continue your progress or start new.</p>
-    <p>@Html.ActionLink("Options", "Options", "Home", new { @class = "btn btn-primary btn-lg" })</p>
+    @Html.ActionLink("Options", "Options", "Home", new { @class = "btn btn-primary btn-lg" })
+
+    @if (User.Identity.GetUserId() != null)
+    {
+        using (Html.BeginForm("Progress", "Home", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            <button type="submit" class="btn btn-primary btn-lg">Progress</button>
+        }
+    }
 </div>
 
 <div class="row">
-@for(var i = 0; i < Model.ModuleGroups.Count; i++)
-{
-    <div class="col-md-4">
-        <h2>@String.Concat("Game - ", (i + 1).ToString())</h2>
-        <p>
-            @foreach (var module in Model.ModuleGroups[i])
+    @for(var i = 0; i < Model.ModuleGroups.Count; i++)
+    {
+        <div class="col-md-4">
+            <h2>@String.Concat("Game - ", (i + 1).ToString())</h2>
+            <p>
+                @foreach (var module in Model.ModuleGroups[i])
+                {
+                    <p>@module.Title</p>
+                }
+            </p>
+            @if(User.Identity.GetUserId() != null )
             {
-                <p>@module.Title</p>
+                using (Html.BeginForm("Resume", "Game", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    ;
+                    for (int j = 0; j < Model.ModuleGroups[i].Count; j++)
+                    {
+                        @Html.HiddenFor(m => m.CurrentGame[j], new {@Value = Model.ModuleGroups[i][j].Id});
+                    }
+                    <button type="submit" class="btn btn-default">Resume</button>
+                }
             }
-        </p>
-        @if(User.Identity.GetUserId() != null )
-        {
-            using (Html.BeginForm("Resume", "Game", FormMethod.Post))
-             {
-                 @Html.AntiForgeryToken()
-                 ;
-                 for (int j = 0; j < Model.ModuleGroups[i].Count; j++)
-                 {
-                     @Html.HiddenFor(m => m.CurrentGame[j], new {@Value = Model.ModuleGroups[i][j].Id});
-                 }
-                 <button type="submit" class="btn btn-default">Resume</button>
-             }
-        }
             @using (Html.BeginForm("NewGame", "Game", FormMethod.Post))
             {
                 @Html.AntiForgeryToken();
@@ -54,5 +63,5 @@
                 <button type="submit" class="btn btn-default">New Game</button>
             }
         </div>
-}
+    }
 </div>

@@ -9,6 +9,7 @@ using System.Web.Helpers;
 using System.Web.Mvc;
 using System.Web.Routing;
 using System.Web.Security;
+using Autofac.Core.Lifetime;
 using AutoMapper;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
@@ -139,7 +140,16 @@ namespace SymHack.Controllers
             if (ModelState.IsValid)
             {
                 var module = ModuleManager.GetModuleById(id);
-                response = module.Responses.FirstOrDefault(r => new Regex(Regex.Unescape(r.Request)).IsMatch(key))?.Response;
+                var matches = module.Responses.Select(r =>
+                {
+                    var m = new Regex(Regex.Unescape(r.Request)).Match(key);
+                    object[] captures = new object[m.Groups.Count];
+                    m.Groups.CopyTo(captures, 0);
+
+                    return String.Format(r.Response, captures);
+                }).ToList();
+
+                response = matches.FirstOrDefault();
             }
 
             return response != null ? Regex.Unescape(response) : $"{key} is not recognized as an internal or external command, operable program or batch file.";

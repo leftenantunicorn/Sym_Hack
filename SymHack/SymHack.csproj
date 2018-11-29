@@ -235,6 +235,7 @@
     <Compile Include="Controllers\AccountController.cs" />
     <Compile Include="Controllers\CookieWrapper.cs" />
     <Compile Include="Controllers\GameController.cs" />
+    <Compile Include="Controllers\Helpers.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\TeacherController.cs" />
@@ -253,6 +254,7 @@
     <Content Include="Content\bootstrap-theme.css" />
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.dark.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\mdb.min.css" />
     <Content Include="favicon.ico" />
@@ -331,6 +333,7 @@
     <Content Include="Views\Game\Email.cshtml" />
     <Content Include="Views\Home\Options.cshtml" />
     <Content Include="Views\Shared\_Music.cshtml" />
+    <Content Include="Views\Home\Progress.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

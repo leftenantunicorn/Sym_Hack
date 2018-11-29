@@ -1,0 +1,78 @@
+﻿@model SymHack.Models.PlayerStatsViewModel
+<script type="text/javascript" src="@Url.Content("/Scripts/Chart.bundle.min.js")"></script>
+@{
+    ViewBag.Title = "Progress";
+}
+
+@Html.Partial("../Teacher/ViewStudent", Model)
+
+@section scripts {
+    <script>
+        $.ajax({
+            url: '@Url.Action("GetChartData", "Home")',
+            type: 'POST',
+            dataType: 'Json',
+            contentType: 'application/json; charset=utf-8',
+        }).done(function(response) {
+            $(".viewCanvas").each(function() {
+                var id = $(this).attr('id');
+                PopulateData(response[id]);
+            });
+        });
+
+        function PopulateData(data) {
+            var ctx = document.getElementById(data.Id).getContext('2d');
+            var options = {
+                type: 'bar',
+                data: {
+                    labels: data.Labels,
+                    datasets: [
+                        {
+                            data: data.Data,
+                            backgroundColor: data.BackgroundColour,
+                            borderColor: data.BorderColour,
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    legend: {
+                        display: false
+                    },
+                    scales: {
+                        xAxes: [
+                            {
+                                ticks: {
+                                    autoSkip: false
+                                }
+                            }
+                        ],
+                        yAxes: [
+                            {
+                                ticks: {
+                                    min: -0.1,
+                                    max: 2,
+                                    stepSize: 1,
+                                    callback: function(label, index, labels) {
+                                        switch (label) {
+                                        case 0:
+                                            return 'Not Started';
+                                        case 1:
+                                            return 'In Progress';
+                                        case 2:
+                                            return 'Completed';
+                                        }
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }
+            }
+            new Chart(ctx, options);
+        };
+        </script>
+    }
+

@@ -50,7 +50,7 @@ namespace SymHack.Models
         public string Confirmed { get; set; }
     }
 
-    public class PlayerViewModel
+    public class PlayerStatsViewModel
     {
         [Required]
         [EmailAddress]
@@ -60,13 +60,18 @@ namespace SymHack.Models
         [Display(Name = "Name")]
         public String Name { get; set; }
 
-        public ICollection<ModuleViewModels> Modules { get; set; }
+        public List<ModuleGroupViewModel> Stats { get; set; }
+    }
 
-        public string Labels { get; set; }
-        public string Data { get; set; }
-        public string BackgroundColour { get; set; }
-        public string BorderColour { get; set; }
-        public string ColourList { get; set; }
+    public class ModuleGroupViewModel
+    {
+        public int Id { get; set; }
+        public string Type { get; set; }
+        public string[] Labels { get; set; }
+        public double[] Data { get; set; }
+        public string[] BackgroundColour { get; set; }
+        public string[] BorderColour { get; set; }
+        public string[] ColourList { get; set; }
     }
 
     public static class ChartColouring

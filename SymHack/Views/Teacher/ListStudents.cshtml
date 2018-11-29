@@ -22,8 +22,8 @@
                 <td>@Html.DisplayFor(modelItem => student.LastName)</td>
                 <td>@Html.DisplayFor(modelItem => student.Confirmed)</td>
                 <td>
-                    @Ajax.ActionLink("Delete", "DeleteStudent", "Teacher", new { email = student.Email }, new AjaxOptions { HttpMethod = "POST", OnSuccess = "refreshList" }, new { @class = "btn btn-link" })
-                    @Ajax.ActionLink("View", "ViewStudent", "Teacher", new { email = student.Email }, new AjaxOptions { UpdateTargetId = "content-id", OnSuccess = "showModal" }, new { @class = "btn btn-link" })
+                    @Ajax.ActionLink("Delete", "DeleteStudent", "Teacher", new { email = student.Email }, new AjaxOptions { HttpMethod = "POST", OnSuccess = "refreshList" }, new { @class = "btn btn-link", style = "padding:0" }) |
+                    @Ajax.ActionLink("View", "ViewStudent", "Teacher", new { email = student.Email }, new AjaxOptions { UpdateTargetId = "content-id", OnSuccess = "showModal" }, new { @class = "btn btn-link", style = "padding:0" })
                 </td>
             </tr>
          }
