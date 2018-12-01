@@ -153,7 +153,17 @@ namespace SymHack.Controllers
             }
             else
             {
-                optionsVM.Volume = Int32.TryParse(CookieWrapper.MusicVolume, out var temp) ? temp : 50;
+                int volume;
+                try
+                {
+                    volume = System.Convert.ToInt32(CookieWrapper.MusicVolume);
+                }
+                catch
+                {
+                    volume = 50;
+                }
+
+                optionsVM.Volume = volume;
                 optionsVM.Style = CookieWrapper.MusicStyle ?? "mute";
             }
 
