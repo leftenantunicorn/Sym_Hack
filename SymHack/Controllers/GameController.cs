@@ -21,7 +21,7 @@ using Microsoft.Ajax.Utilities;
 
 namespace SymHack.Controllers
 {
-    public class GameController : Controller
+    public class GameController : CustomController
     {
         private ModuleManager ModuleManager;
         private ApplicationUserManager UserManager;

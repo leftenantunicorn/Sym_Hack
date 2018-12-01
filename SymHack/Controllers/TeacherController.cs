@@ -20,7 +20,7 @@ using SymHack.Repository;
 
 namespace SymHack.Controllers
 {
-    public class TeacherController : Controller
+    public class TeacherController : CustomController
     {
         private readonly ApplicationUserManager UserManager;
         private readonly ModuleManager ModuleManager;

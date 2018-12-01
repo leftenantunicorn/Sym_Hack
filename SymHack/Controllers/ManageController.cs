@@ -11,7 +11,7 @@ using SymHack.Models;
 namespace SymHack.Controllers
 {
     [Authorize]
-    public class ManageController : Controller
+    public class ManageController : CustomController
     {
         private ApplicationSignInManager SignInManager;
         private ApplicationUserManager UserManager;

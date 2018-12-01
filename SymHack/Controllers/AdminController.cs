@@ -14,7 +14,7 @@ using SymHack.Repository;
 
 namespace SymHack.Controllers
 {
-    public class AdminController : Controller
+    public class AdminController : CustomController
     {
         private ApplicationUserManager UserManager;
         private IMapper Mapper;

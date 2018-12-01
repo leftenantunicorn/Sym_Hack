@@ -14,7 +14,7 @@ using SymHack.Repository;
 
 namespace SymHack.Controllers
 {
-    public class HomeController : Controller
+    public class HomeController : CustomController
     {
         private ModuleManager ModuleManager;
         private ApplicationUserManager UserManager;
@@ -39,6 +39,11 @@ namespace SymHack.Controllers
         public async Task<ActionResult> Options()
         {
             return View(await CreateOptions());
+        }
+
+        public ActionResult Error()
+        {
+            return View("Error");
         }
 
         [HttpPost]
