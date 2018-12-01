@@ -110,8 +110,16 @@ namespace SymHack.Controllers
             if (!ModelState.IsValid) return Json(new { result = "Error with your submission." }); ;
 
             var module = ModuleManager.GetModuleByTitle(title);
+            string log;
 
-            var log = ModuleManager?.GetUserModuleById(new Guid(userModuleId))?.Log ?? CookieWrapper.GuestLog;
+            if (String.IsNullOrEmpty(userModuleId))
+            {
+                log = CookieWrapper.GuestLog;
+            }
+            else
+            {
+                log = ModuleManager?.GetUserModuleById(new Guid(userModuleId))?.Log;
+            }
 
             foreach (var winCondition in module.WinConditions)
             {
@@ -122,10 +130,15 @@ namespace SymHack.Controllers
             }
 
             Module next;
-            ModuleManager.UpdateStatusById(new Guid(userModuleId), "Completed");
+
+            if (!String.IsNullOrEmpty(userModuleId))
+            {
+                ModuleManager.UpdateStatusById(new Guid(userModuleId), "Completed");
+            }
 
             if ((next = ModuleManager.GetNextModuleById(module.Id)) != null)
             {
+                CookieWrapper.GuestLog = "";
                 return Json(new { result = "redirect", url = Url.Action("Index", "Game", new RouteValueDictionary(new { moduleId = next.Id}))});
             }
 
@@ -172,8 +185,16 @@ namespace SymHack.Controllers
         private async Task<bool> CheckResponsePrerequisite(ModuleDictionary dictionary, Guid moduleId)
         {
             SymHackUser user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+            String log;
 
-            var log = ModuleManager?.GetUserModuleByModuleAndUserId(moduleId, user.Id)?.Log ?? CookieWrapper.GuestLog;
+            if (user == null)
+            {
+                log = CookieWrapper.GuestLog;
+            }
+            else
+            {
+                log = ModuleManager?.GetUserModuleById(new Guid(user.Id))?.Log;
+            }
             
             return Regex.IsMatch(log, Regex.Unescape(dictionary.Prerequisite));
         }
@@ -236,7 +257,7 @@ namespace SymHack.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> GameOver()
+        public async Task<ActionResult> GameOver(Guid? moduleId)
         {
             return View("~/Views/Game/GameOver.cshtml");
         }
