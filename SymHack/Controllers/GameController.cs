@@ -81,6 +81,7 @@ namespace SymHack.Controllers
 
             if (moduleId == Guid.Empty)
             {
+                ViewBag.errorMessage = "Could not find any in progress games, please begin a new game.";
                 return View("Error");
             }
 
@@ -108,7 +109,6 @@ namespace SymHack.Controllers
         {
             if (!ModelState.IsValid) return Json(new { result = "Error with your submission." }); ;
 
-            SymHackUser user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
             var module = ModuleManager.GetModuleByTitle(title);
 
             var log = ModuleManager?.GetUserModuleById(new Guid(userModuleId))?.Log ?? CookieWrapper.GuestLog;
@@ -129,7 +129,7 @@ namespace SymHack.Controllers
                 return Json(new { result = "redirect", url = Url.Action("Index", "Game", new RouteValueDictionary(new { moduleId = next.Id}))});
             }
 
-            return Json(new { result = "redirect", url=Url.Action("GameOver", "Game") });
+            return Json(new { result = "redirect", url = Url.Action("GameOver", "Game", new RouteValueDictionary(new {}))});
         }
 
         [HttpPost]
@@ -235,9 +235,10 @@ namespace SymHack.Controllers
             });
         }
 
-        public ActionResult GameOver()
+        [HttpGet]
+        public async Task<ActionResult> GameOver()
         {
-            return View();
+            return View("~/Views/Game/GameOver.cshtml");
         }
 
         [HttpPost]
