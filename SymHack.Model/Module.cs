@@ -35,6 +35,8 @@ namespace SymHack.Model
 
         public string Request { get; set; }
         public string Response { get; set; }
+        public string Prerequisite { get; set; }
+        public string PrerequisiteReject { get; set; }
     }
 
     public class ModuleHints

@@ -11,7 +11,7 @@ using SymHack.Controllers;
 namespace SymHack.Tests.Controllers
 {
     [TestClass]
-    public class HomeControllerTest
+    public class ModuleRegexTests
     {
         [TestMethod]
         public void Netsh()

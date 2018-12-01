@@ -104,7 +104,7 @@ namespace SymHack.Controllers
 
         [HttpGet]
         [Authorize(Roles = "Teacher, Admin")]
-        public async Task<ActionResult> AddStudent()
+        public ActionResult AddStudent()
         {
             var new_student = new StudentViewModel();
             return PartialView("AddStudent", new_student);
@@ -177,7 +177,7 @@ namespace SymHack.Controllers
         [HttpPost]
         [Authorize(Roles = "Teacher, Admin")]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> UploadFromFile(HttpPostedFileBase studentFile)
+        public ActionResult UploadFromFile(HttpPostedFileBase studentFile)
         {
             var teacher = new TeacherViewModel();
 
@@ -192,7 +192,7 @@ namespace SymHack.Controllers
                     var students = engine.ReadStream(reader).ToList();
                     teacher.RegisterStudents = students;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     ModelState.AddModelError("", "Could not read file");
                 }

@@ -86,6 +86,14 @@
     <Compile Include="Migrations\201811281806447_Updated volume to nullable int.Designer.cs">
       <DependentUpon>201811281806447_Updated volume to nullable int.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201811292204534_Added prerequisite to dictionary.cs" />
+    <Compile Include="Migrations\201811292204534_Added prerequisite to dictionary.Designer.cs">
+      <DependentUpon>201811292204534_Added prerequisite to dictionary.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Migrations\201811292222354_Changed prerequisite schema.cs" />
+    <Compile Include="Migrations\201811292222354_Changed prerequisite schema.Designer.cs">
+      <DependentUpon>201811292222354_Changed prerequisite schema.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="ModuleManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -125,6 +133,12 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201811281806447_Updated volume to nullable int.resx">
       <DependentUpon>201811281806447_Updated volume to nullable int.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811292204534_Added prerequisite to dictionary.resx">
+      <DependentUpon>201811292204534_Added prerequisite to dictionary.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201811292222354_Changed prerequisite schema.resx">
+      <DependentUpon>201811292222354_Changed prerequisite schema.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

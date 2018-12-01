@@ -79,7 +79,7 @@
 
 <ul id="console-lines">
     @{
-        String pattern = @"{""input"":""(.+?)"",""output"":""(.+?)""}";
+        String pattern = @"{""input"":""(.*?)"",""output"":""(.*?)""}";
         if (Model.Log != null)
         {
             foreach (Match m in Regex.Matches(Model.Log, pattern))
@@ -105,6 +105,8 @@
 </ul>
 
 <script>
+
+
     $("textarea").each(function() {
         $(this).flexible();
     });
@@ -119,6 +121,9 @@
 
                     var log = { input: this.value, output: response };
                     $.post("@Url.Action("AddToLog", "Game")", { id: "@Model.UserModuleId", addToLog: JSON.stringify(log) });
+
+                    $("#main-content").scrollTop($("#main-content")[0].scrollHeight);
+                    $('#console-lines li:last-child input').focus();
                 });
 
             event.preventDefault();
@@ -140,6 +145,8 @@
             r_clone.find(':input').trigger("updateHeight");
 
             $('#console-lines').append(r_clone);
+
+            r_clone.focus();
         }
 
         if (request) {

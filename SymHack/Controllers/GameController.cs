@@ -140,33 +140,43 @@ namespace SymHack.Controllers
             if (ModelState.IsValid)
             {
                 var module = ModuleManager.GetModuleById(id);
-                var matches = module.Responses.Select(r =>
+                var matches = new Dictionary<Guid, string>();
+                foreach(var r in module.Responses)
                 {
-                    var m = new Regex(Regex.Unescape(r.Request)).Match(key);
-                    object[] captures = new object[m.Groups.Count];
-                    m.Groups.CopyTo(captures, 0);
+                    var m = new Regex("^" + Regex.Unescape(r.Request) + "$").Match(key);
+                    if (m.Success)
+                    {
+                        object[] captures = new object[m.Groups.Count];
+                        m.Groups.CopyTo(captures, 0);
 
-                    return String.Format(r.Response, captures);
-                }).ToList();
+                        if (String.IsNullOrEmpty(r.Prerequisite))
+                        {
+                            matches.Add(r.Id, String.Format(r.Response, captures));
+                        }
+                        else
+                        {
+                            if(await CheckResponsePrerequisite(r, module.Id)) 
+                                matches.Add(r.Id, String.Format(r.Response, captures));
+                            else
+                                matches.Add(r.Id, r.PrerequisiteReject);
+                        }
+                    }
+                }
 
-                response = matches.FirstOrDefault();
+                response = matches.FirstOrDefault().Value;
             }
 
             return response != null ? Regex.Unescape(response) : $"{key} is not recognized as an internal or external command, operable program or batch file.";
         }
 
-//        private bool CheckResponsePrerequisite(string key, Guid id)
-//        {
-//            var module = ModuleManager.GetModuleById(id);
-//            var matches = module.Responses.Select(r =>
-//            {
-//                var m = new Regex(Regex.Unescape(r.Request)).Match(key);
-//                object[] captures = new object[m.Groups.Count];
-//                m.Groups.CopyTo(captures, 0);
-//
-//                return String.Format(r.Response, captures);
-//            }).ToList();
-//        }
+        private async Task<bool> CheckResponsePrerequisite(ModuleDictionary dictionary, Guid moduleId)
+        {
+            SymHackUser user = await UserManager.FindByIdAsync(User.Identity.GetUserId());
+
+            var log = ModuleManager?.GetUserModuleByModuleAndUserId(moduleId, user.Id)?.Log ?? CookieWrapper.GuestLog;
+            
+            return Regex.IsMatch(log, Regex.Unescape(dictionary.Prerequisite));
+        }
 
         [HttpPost]
         public void AddToLog(string id, string addToLog)
@@ -225,7 +235,7 @@ namespace SymHack.Controllers
             });
         }
 
-        public async Task<ActionResult> GameOver()
+        public ActionResult GameOver()
         {
             return View();
         }
