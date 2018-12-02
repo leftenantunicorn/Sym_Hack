@@ -27,11 +27,11 @@
                     @using Microsoft.AspNet.Identity
                     @if (Request.IsAuthenticated && (User.IsInRole("Teacher") || User.IsInRole("Admin")))
                     {
-                        <li>@Html.ActionLink("Teacher", "Index", "Teacher")</li>
+                    <li>@Html.ActionLink("Teacher", "Index", "Teacher", new {}, new { id = "teacherLink" })</li>
                     }
                     @if (Request.IsAuthenticated && (User.IsInRole("Admin")))
                     {
-                        <li>@Html.ActionLink("Pending Requests", "Index", "Admin")</li>
+                        <li>@Html.ActionLink("Pending Requests", "Index", "Admin", new {}, new { id = "pendingRequestLink" })</li>
                     }
                 </ul>
                 @Html.Partial("_LoginPartial")

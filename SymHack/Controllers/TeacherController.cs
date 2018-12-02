@@ -90,8 +90,15 @@ namespace SymHack.Controllers
                         var email_link = Url.Action("ConfirmEmail", "Account",
                             new {userId = user.Id, code = code}, protocol: Request.Url.Scheme);
 
-                        await UserManager.SendEmailAsync(user.Id, "Confirm your account",
-                            "Please confirm your account by clicking <a href=\"" + email_link + "\">here</a>");
+                        try
+                        {
+                            await UserManager.SendEmailAsync(user.Id, "Confirm your account",
+                                "Please confirm your account by clicking <a href=\"" + email_link + "\">here</a>");
+                        }
+                        catch (Exception e)
+                        {
+                            Console.WriteLine(e);
+                        }
                     }
                     else registration_fail.Add(student);
                 }

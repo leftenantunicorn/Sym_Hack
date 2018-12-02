@@ -29,7 +29,8 @@ namespace SymHack.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<ActionResult> Index()
         {
-            return View(await getPending());
+            var pending = await GetPending();
+            return View(pending);
         }
 
         [Authorize(Roles = "Admin")]
@@ -41,11 +42,18 @@ namespace SymHack.Controllers
                 await UserManager.AddToRoleAsync(user.Id, "Student");
                 await UserManager.RemoveFromRoleAsync(user.Id, "PendingTeacher");
 
-                await UserManager.SendEmailAsync(user.Id, "Request Rejection",
-                    "Your request to be a teacher in the Sym-Hack game has been rejected.");
+                try
+                {
+                    await UserManager.SendEmailAsync(user.Id, "Request Rejection",
+                        "Your request to be a teacher in the Sym-Hack game has been rejected.");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
             }
 
-            return PartialView("ListPending", await getPending());
+            return PartialView("ListPending", await GetPending());
         }
 
         [Authorize(Roles = "Admin")]
@@ -57,20 +65,34 @@ namespace SymHack.Controllers
                 await UserManager.AddToRoleAsync(user.Id, "Teacher");
                 await UserManager.RemoveFromRoleAsync(user.Id, "PendingTeacher");
 
-                await UserManager.SendEmailAsync(user.Id, "Request Approval",
-                    "Your request to be a teacher in the Sym-Hack game has been approved.");
+                try
+                {
+                    await UserManager.SendEmailAsync(user.Id, "Request Approval",
+                        "Your request to be a teacher in the Sym-Hack game has been approved.");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
             }
 
-            return PartialView("ListPending", await getPending());
+            return PartialView("ListPending", await GetPending());
         }
 
-        private async Task<AdminViewModel> getPending()
+        private async Task<AdminViewModel> GetPending()
         {
             ICollection<StudentViewModel> pending = new List<StudentViewModel>();
             foreach (var user in UserManager.Users)
             {
-                if (await UserManager.IsInRoleAsync(user.Id, "PendingTeacher"))
-                    pending.Add(Mapper.Map<StudentViewModel>(user));
+                try
+                {
+                    if (await UserManager.IsInRoleAsync(user.Id, "PendingTeacher"))
+                        pending.Add(Mapper.Map<StudentViewModel>(user));
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
             }
 
             return new AdminViewModel()

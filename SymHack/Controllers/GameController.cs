@@ -257,17 +257,24 @@ namespace SymHack.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult> GameOver(Guid? moduleId)
+        public ActionResult GameOver(Guid? moduleId)
         {
-            return View("~/Views/Game/GameOver.cshtml");
+            return View("GameOver");
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> GameOver(string body)
         {
-            await UserManager.SendEmailAsync("30b1eb71-7d27-4e0e-ab15-0f7289d4d70d", "Feedback",
-                body);
+            try
+            {
+                await UserManager.SendEmailAsync("30b1eb71-7d27-4e0e-ab15-0f7289d4d70d", "Feedback",
+                    body);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
 
             return View();
         }

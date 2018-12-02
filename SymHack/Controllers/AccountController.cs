@@ -1,5 +1,6 @@
 ﻿
 
+using System;
 using System.Linq;
 using System.Net.Mail;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ using SymHack.Repository;
 namespace SymHack.Controllers
 {
     [Authorize]
-    public class AccountController : Controller
+    public class AccountController : CustomController
     {
         private readonly ApplicationSignInManager SignInManager;
         private readonly ApplicationUserManager UserManager;
@@ -218,7 +219,16 @@ namespace SymHack.Controllers
                 // Send an email with this link
                 string code = await UserManager.GeneratePasswordResetTokenAsync(user.Id);
                 var callbackUrl = Url.Action("ResetPassword", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
-                await UserManager.SendEmailAsync(user.Id, "Reset Password", "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                try
+                {
+                    await UserManager.SendEmailAsync(user.Id, "Reset Password",
+                        "Please reset your password by clicking <a href=\"" + callbackUrl + "\">here</a>");
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+
                 return RedirectToAction("ForgotPasswordConfirmation", "Account");
             }
 
@@ -525,13 +535,24 @@ namespace SymHack.Controllers
 
         private async Task<string> SendEmailConfirmationTokenAsync(string userID, string subject)
         {
-            string code = await UserManager.GenerateEmailConfirmationTokenAsync(userID);
-            var callbackUrl = Url.Action("ConfirmEmail", "Account",
-                new { userId = userID, code = code }, protocol: Request.Url.Scheme);
-            await UserManager.SendEmailAsync(userID, subject,
-                "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+            try
+            {
+                    string code = await UserManager.GenerateEmailConfirmationTokenAsync(userID);
+                var callbackUrl = Url.Action("ConfirmEmail", "Account",
+                    new { userId = userID, code = code }, protocol: Request.Url.Scheme);
 
-            return callbackUrl;
+                await UserManager.SendEmailAsync(userID, subject,
+                    "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+
+                return callbackUrl;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e);
+            }
+
+            return "";
         }
         #endregion
     }

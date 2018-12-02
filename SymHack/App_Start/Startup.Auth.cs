@@ -1,8 +1,12 @@
 ﻿using System;
+using System.Web.Mvc;
+using Autofac;
+using Autofac.Integration.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security.Cookies;
+using Microsoft.Owin.Security.DataProtection;
 using Microsoft.Owin.Security.Google;
 using Owin;
 using SymHack.Model;
@@ -13,9 +17,15 @@ namespace SymHack
 {
     public partial class Startup
     {
+        internal static IDataProtectionProvider DataProtectionProvider;
+
         // For more information on configuring authentication, please visit https://go.microsoft.com/fwlink/?LinkId=301864
         public void ConfigureAuth(IAppBuilder app)
         {
+            var builder = new ContainerBuilder();
+
+            DataProtectionProvider = app.GetDataProtectionProvider();
+
             // Configure the db context, user manager and signin manager to use a single instance per request
             // Using autofac
             //app.CreatePerOwinContext(SymHackContext.Create);

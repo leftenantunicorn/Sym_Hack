@@ -9,6 +9,7 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using Microsoft.Owin.Security.DataProtection;
 using SymHack.App_Start;
 using SymHack.Model;
 using SymHack.Repository;
@@ -20,6 +21,8 @@ namespace SymHack
         public static void RegisterComponents()
         {
             var builder = new ContainerBuilder();
+
+            builder.Register<IDataProtectionProvider>(c => Startup.DataProtectionProvider).InstancePerRequest();
 
             builder.RegisterType<SymHackContext>().AsSelf().InstancePerRequest();
             builder.RegisterType<ApplicationUserManager>().AsSelf().InstancePerRequest();

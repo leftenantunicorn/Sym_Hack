@@ -5,6 +5,7 @@ using System.Data.Entity;
 using System.Diagnostics;
 using System.Linq;
 using System.Net;
+using System.Net.Mail;
 using System.Runtime.CompilerServices;
 using System.Security.Claims;
 using System.Threading.Tasks;
@@ -14,6 +15,7 @@ using Microsoft.AspNet.Identity.EntityFramework;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin;
 using Microsoft.Owin.Security;
+using Microsoft.Owin.Security.DataProtection;
 using SendGrid;
 using SendGrid.Helpers.Mail;
 using SymHack.Model;
@@ -50,7 +52,7 @@ namespace SymHack
 
             var client = new SendGridClient(System.Environment.GetEnvironmentVariable("SENDGRID_APIKEY"));
 
-            await client.SendEmailAsync(myMessage);
+            client.SendEmailAsync(myMessage).Wait();
         }
     }
 
@@ -66,7 +68,7 @@ namespace SymHack
     // Configure the application user manager used in this application. UserManager is defined in ASP.NET Identity and is used by the application.
     public class ApplicationUserManager : UserManager<SymHackUser>
     {
-        public ApplicationUserManager(IUserStore<SymHackUser> store, IdentityFactoryOptions<ApplicationUserManager> options)
+        public ApplicationUserManager(IUserStore<SymHackUser> store, IdentityFactoryOptions<ApplicationUserManager> options, IDataProtectionProvider dataProtectionProvider)
             : base(store)
         {
             // Configure validation logic for usernames
@@ -104,7 +106,6 @@ namespace SymHack
             });
             EmailService = new EmailService();
             SmsService = new SmsService();
-            var dataProtectionProvider = options.DataProtectionProvider;
             if (dataProtectionProvider != null)
             {
                 UserTokenProvider =
